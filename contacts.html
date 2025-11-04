@@ -16,117 +16,138 @@
 </head>
 
 <body>
-<header>
-    <nav id="nav" class="topnav">
-        <div class="nav-logo"><a href="./index.html">RUBY</a></div>
-        <a href="javascript:void(0);" class="icon" onclick="myFunction()">
-            <i class="fa fa-bars"></i>
-        </a>
-        <div class="nav-main">
-            <div class="nav-first">
-                <a href="./menu.html">Меню</a>
-                <a href="./index.html#about-us">Про нас</a>
-                <a href="./news.html">Новини</a>
-                <a href="./info.html">Інформація</a>
-                <a href="./contacts.html" class="active">Контакти</a>
+    <header>
+        <nav id="nav" class="topnav">
+            <div class="nav-logo"><a href="./index.html">RUBY</a></div>
+            <a href="javascript:void(0);" class="icon" onclick="myFunction()">
+                <i class="fa fa-bars"></i>
+            </a>
+            <div class="nav-main">
+                <div class="nav-first">
+                    <a href="./menu.html">Меню</a>
+                    <a href="./index.html#about-us">Про нас</a>
+                    <a href="./news.html">Новини</a>
+                    <a href="./info.html">Інформація</a>
+                    <a href="./contacts.html" class="active">Контакти</a>
+                </div>
+                <div class="nav-second">
+                    <a href="./account.html"><i class="fa fa-user" aria-hidden="true"></i></a>
+                    <a href="./shoppingcart.html"><i class="fa fa-shopping-cart" aria-hidden="true"></i></a>
+                </div>
             </div>
-            <div class="nav-second">
-                <a href="./account.html"><i class="fa fa-user" aria-hidden="true"></i></a>
-                <a href="./shopping_card.html"><i class="fa fa-shopping-cart" aria-hidden="true"></i></a>
-            </div>
-        </div>
-    </nav>
-</header>
-<main>
-    <div id="scrollToTopBtn"></div>
-    <script src="code.js"></script>
+        </nav>
+    </header>
+    <main>
+        <div id="scrollToTopBtn"></div>
+        <script src="code.js"></script>
 
-    <div class="banner">
-        <img src="./image/waves_4.png" width="100%" alt="волны">
-    </div>
-    <div class="main">
-        <h2 class="title">Наші кондитерські</h2>
-        <div class="filters">
-            <select class="sort-form">
-                <option class="option" value="">Сортувати за...</option>
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-            </select>
-            <form class="search-form">
-                <input class="search-input" type="text" placeholder="Пошук...">
-                <button class="search-button" type="submit"><img src="./image/search.svg" alt=""></button>
-            </form>
+        <div class="banner">
+            <img src="./image/waves_4.png" width="100%" alt="волны">
         </div>
-        <div class="cont-cards">
-            <div class="cont-card">
-                <div class="cont-text">
-                    <div>
-                        <h2 class="cont-add">Адреса кондитерської 1</h2>
-                        <p class="cont-sched">Графік роботи: 8:00-20:00</p>
-                        <div class="cont-phones">
-                            <p>Контактні телефони:</p>
-                            <p>+380501234567</p>
-                            <p>+380661234567</p>
-                        </div>
-                    </div>
-                    <p class="cont-open">Відчинено</p>
-                </div>
-                <img src="./image/image 22.png" alt="">
+        <div class="main">
+            <h2 class="title">Наші кондитерські</h2>
+            <div class="filters">
+                <select class="sort-form">
+                    <option class="option" value="">Сортувати за...</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                </select>
+                <form class="search-form">
+                    <input class="search-input" type="text" placeholder="Пошук...">
+                    <button class="search-button" type="submit"><img src="./image/search.svg" alt=""></button>
+                </form>
             </div>
-            <div class="cont-card">
-                <div class="cont-text">
-                    <div>
-                        <h2 class="cont-add">Адреса кондитерської 2</h2>
-                        <p class="cont-sched">Графік роботи: 9:00-19:00</p>
-                        <div class="cont-phones">
-                            <p>Контактні телефони:</p>
-                            <p>+380501234567</p>
-                            <p>+380661234567</p>
+            <div class="cont-cards">
+                <div class="add-container">
+                    <img src="/image/Group 76.jpg" alt="" class="add-button">
+                </div>
+                <div class="cont-card">
+                    <div class="cont-text">
+                        <div>
+                            <h2 class="cont-add">Адреса кондитерської 1</h2>
+                            <p class="cont-sched">Графік роботи: 8:00-20:00</p>
+                            <div class="cont-phones">
+                                <p>Контактні телефони:</p>
+                                <p>+380501234567</p>
+                                <p>+380661234567</p>
+                            </div>
+                        </div>
+                        <p class="cont-open">Відчинено</p>
+
+                        <div class="change-buttons">
+                            <button class="change-button">Редагувати</button>
+                            <button class="change-button">Видалити</button>
                         </div>
                     </div>
-                    <p class="cont-close">Зачинено</p>
+                    <img src="./image/image 22.png" alt="">
                 </div>
-                <img src="./image/image 23.png" alt="">
+                <div class="cont-card">
+                    <div class="cont-text">
+                        <div>
+                            <h2 class="cont-add">Адреса кондитерської 2</h2>
+                            <p class="cont-sched">Графік роботи: 9:00-19:00</p>
+                            <div class="cont-phones">
+                                <p>Контактні телефони:</p>
+                                <p>+380501234567</p>
+                                <p>+380661234567</p>
+                            </div>
+                        </div>
+                        <p class="cont-close">Зачинено</p>
+                        <div class="change-buttons">
+                            <button class="change-button">Редагувати</button>
+                            <button class="change-button">Видалити</button>
+                        </div>
+                    </div>
+                    <img src="./image/image 23.png" alt="">
+                </div>
+                <div class="cont-card">
+                    <div class="cont-text">
+                        <div>
+                            <h2 class="cont-add">Адреса кондитерської 3</h2>
+                            <p class="cont-sched">Графік роботи: 8:00-20:00</p>
+                            <div class="cont-phones">
+                                <p>Контактні телефони:</p>
+                                <p>+380501234567</p>
+                                <p>+380661234567</p>
+                            </div>
+                        </div>
+                        <p class="cont-open">Відчинено</p>
+                        <div class="change-buttons">
+                            <button class="change-button">Редагувати</button>
+                            <button class="change-button">Видалити</button>
+                        </div>
+                    </div>
+                    <img src="./image/image 24.png" alt="">
+                </div>
+                <div class="cont-card">
+                    <div class="cont-text">
+                        <div>
+                            <h2 class="cont-add">Адреса кондитерської 4</h2>
+                            <p class="cont-sched">Графік роботи: 8:00-20:00</p>
+                            <div class="cont-phones">
+                                <p>Контактні телефони:</p>
+                                <p>+380501234567</p>
+                                <p>+380661234567</p>
+                            </div>
+                        </div>
+                        <p class="cont-open">Відчинено</p>
+                        <div class="change-buttons">
+                            <button class="change-button">Редагувати</button>
+                            <button class="change-button">Видалити</button>
+                        </div>
+                    </div>
+                    <img src="./image/image 25.png" alt="">
+                </div>
             </div>
-            <div class="cont-card">
-                <div class="cont-text">
-                    <div>
-                        <h2 class="cont-add">Адреса кондитерської 3</h2>
-                        <p class="cont-sched">Графік роботи: 8:00-20:00</p>
-                        <div class="cont-phones">
-                            <p>Контактні телефони:</p>
-                            <p>+380501234567</p>
-                            <p>+380661234567</p>
-                        </div>
-                    </div>
-                    <p class="cont-open">Відчинено</p>
-                </div>
-                <img src="./image/image 24.png" alt="">
-            </div>
-            <div class="cont-card">
-                <div class="cont-text">
-                    <div>
-                        <h2 class="cont-add">Адреса кондитерської 4</h2>
-                        <p class="cont-sched">Графік роботи: 8:00-20:00</p>
-                        <div class="cont-phones">
-                            <p>Контактні телефони:</p>
-                            <p>+380501234567</p>
-                            <p>+380661234567</p>
-                        </div>
-                    </div>
-                    <p class="cont-open">Відчинено</p>
-                </div>
-                <img src="./image/image 25.png" alt="">
+            <div class="cont">
+                <button class="cont-button"><img src="./image/Line 1.png"></button>
             </div>
         </div>
-        <div class="cont">
-            <button class="cont-button"><img src="./image/Line 1.png"></button>
-        </div>
-    </div>
-</main>
-<div id="footer"></div>
+    </main>
+    <div id="footer"></div>
 </body>
+
 </html>

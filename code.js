@@ -33,3 +33,9 @@ fetch('footer.html')
         document.getElementById('footer').innerHTML = html;
     })
     .catch(error => console.error('Помилка завантаження фрагмента:', error));
+
+function goToOrder() {
+  var url = 'order.html';
+  window.location.href = url;
+}
+
