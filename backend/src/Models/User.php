@@ -1,22 +1,19 @@
 <?php
 
-namespace App\Controllers;
+namespace App\Models;
 
-class UserController
+class User
 {
-    public function register()
-    {
-        echo "This is register() function skeleton.";
-    }
+    public int $id;
+    public string $email;
+    public string $passwordHash;
+    public string $role;
 
-    public function login()
+    public function __construct(string $email, string $passwordHash, int $id = 0, string $role = 'user')
     {
-        echo "This is login() function skeleton.";
-    }
-
-    public function getAccountDetails()
-    {
-
-        echo "This is getAccountDetails() function skeleton.";
+        $this->email = $email;
+        $this->passwordHash = $passwordHash;
+        $this->id = $id;
+        $this->role = $role;
     }
 }

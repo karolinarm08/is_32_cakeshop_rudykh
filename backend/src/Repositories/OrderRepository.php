@@ -3,29 +3,60 @@
 namespace App\Repositories;
 
 use App\Models\Order;
+use App\Config\Database;
+use PDO;
 
 class OrderRepository
 {
+    private $conn;
+
     public function __construct()
     {
-        // Підключення до БД
+        $database = new Database();
+        $this->conn = $database->getConnection();
     }
 
-    public function save(Order $order): bool
+    public function save(Order $order): int
     {
-        echo "Репозиторій: Збереження Order (ID: $order->id) в БД...\n";
+        $query = "INSERT INTO orders (user_id, total_price, status, address_id) VALUES (:user_id, :total, :status, :address_id)";
+        $stmt = $this->conn->prepare($query);
 
-        return true;
+        $stmt->bindParam(':user_id', $order->userId);
+        $stmt->bindParam(':total', $order->total);
+        $stmt->bindParam(':status', $order->status);
+        
+        // Тимчасово null для адреси, якщо не передано
+        $addrId = $order->shipment ? $order->shipment->id : null; 
+        $stmt->bindParam(':address_id', $addrId);
+
+        if ($stmt->execute()) {
+            return $this->conn->lastInsertId();
+        }
+        return 0;
+    }
+
+    public function addItems(int $orderId, array $items)
+    {
+        $query = "INSERT INTO order_items (order_id, product_id, quantity, unit_price) VALUES (:order_id, :product_id, :qty, :price)";
+        $stmt = $this->conn->prepare($query);
+
+        foreach ($items as $item) {
+            // $item очікується як масив або об'єкт CartItem
+            $stmt->bindParam(':order_id', $orderId);
+            $stmt->bindParam(':product_id', $item['product_id']);
+            $stmt->bindParam(':qty', $item['qty']);
+            $stmt->bindParam(':price', $item['price']);
+            $stmt->execute();
+        }
     }
 
     public function findByUserId(int $userId): array
     {
-        echo "Репозиторій: Пошук всіх Order для User ID: $userId\n";
-        
-        return [
-            new Order($userId, 150.00, 'delivered'),
-            new Order($userId, 320.50, 'shipped')
-        ];
+        $query = "SELECT * FROM orders WHERE user_id = :user_id ORDER BY created_at DESC";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':user_id', $userId);
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }
-

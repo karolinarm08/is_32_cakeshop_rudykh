@@ -19,26 +19,48 @@ class OrderService
         $this->paymentService = new PaymentService();
     }
 
-    public function createNewOrder(int $userId, array $items, int $addressId): ?Order
+    public function createNewOrder(int $userId, array $cartItems, int $addressId = null): array
     {
-        echo "Сервіс: Створення замовлення для User ID: $userId\n";
+        $total = 0;
+        $orderItems = [];
 
-        $total = 199.99; 
-
-        $order = new Order($userId, $total);
-
-        
-        $paymentSuccess = $this->paymentService->processPayment($order, 'LiqPay');
-
-        if ($paymentSuccess) {
-            echo "Сервіс: Оплата пройшла успішно.\n";
-            $order->status = 'processing';
-            
-            return $order;
-        } else {
-            echo "Сервіс: Оплата не вдалася.\n";
-            return null;
+        // Розрахунок суми та підготовка товарів
+        foreach ($cartItems as $item) {
+            $product = $this->productRepository->findById($item['product_id']);
+            if ($product) {
+                $total += $product->price * $item['qty'];
+                $orderItems[] = [
+                    'product_id' => $product->id,
+                    'qty' => $item['qty'],
+                    'price' => $product->price
+                ];
+            }
         }
+
+        if (empty($orderItems)) {
+            return ['success' => false, 'message' => 'Кошик порожній'];
+        }
+
+        $order = new Order($userId, $total, 'new');
+        
+        // Збереження замовлення в БД
+        $orderId = $this->orderRepository->save($order);
+        
+        if ($orderId) {
+            // Збереження товарів замовлення
+            $this->orderRepository->addItems($orderId, $orderItems);
+            
+            // Імітація надсилання Email
+            $this->sendOrderConfirmationEmail($userId, $orderId);
+
+            return ['success' => true, 'order_id' => $orderId, 'total' => $total];
+        }
+
+        return ['success' => false, 'message' => 'Помилка створення замовлення'];
+    }
+    
+    private function sendOrderConfirmationEmail($userId, $orderId) {
+        // Тут має бути логіка PHPMailer або mail()
+        // mail($userEmail, "Замовлення #$orderId підтверджено", "Дякуємо за покупку!");
     }
 }
-

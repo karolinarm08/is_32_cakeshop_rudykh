@@ -3,41 +3,64 @@
 namespace App\Repositories;
 
 use App\Models\User;
-
+use App\Config\Database;
+use PDO;
 
 class UserRepository
 {
+    private $conn;
+
     public function __construct()
     {
+        $database = new Database();
+        $this->conn = $database->getConnection();
     }
 
-    public function findById(int $id): ?User
+    // Пошук користувача за Email
+    public function findByEmail(string $email)
     {
-        echo "Репозиторій: Пошук User з ID: $id\n";
+        $query = "SELECT * FROM users WHERE email = :email LIMIT 1";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':email', $email);
+        $stmt->execute();
+
+        $data = $stmt->fetch(PDO::FETCH_ASSOC);
         
-
-        if (!$id) {
-            return null;
+        if ($data) {
+            // Повертаємо об'єкт User або масив даних
+            return new User($data['email'], $data['password_hash'], $data['id'], $data['role']);
         }
-        return new User("user@example.com", "fake_hash");
+
+        return null;
     }
 
-
-    public function findByEmail(string $email): ?User
-    {
-        echo "Репозиторій: Пошук User з Email: $email\n";
-
-        return null; 
-    }
-
-
+    // Збереження нового користувача
     public function save(User $user): bool
     {
-        echo "Репозиторій: Збереження User (Email: $user->email) в БД...\n";
+        $query = "INSERT INTO users (email, password_hash, role, first_name, last_name, phone) 
+                  VALUES (:email, :password, :role, :first_name, :last_name, :phone)";
         
- 
-        
-        return true;
+        $stmt = $this->conn->prepare($query);
+
+        // Прив'язка даних
+        $stmt->bindParam(':email', $user->email);
+        $stmt->bindParam(':password', $user->passwordHash);
+        $role = 'user'; // Значення за замовчуванням
+        $stmt->bindParam(':role', $role);
+        // Додаткові поля можна додати в модель User, поки лишимо null або пусті
+        $empty = '';
+        $stmt->bindParam(':first_name', $empty);
+        $stmt->bindParam(':last_name', $empty);
+        $stmt->bindParam(':phone', $empty);
+
+        if ($stmt->execute()) {
+            return true;
+        }
+        return false;
+    }
+    
+    // Отримання ID останнього створеного запису
+    public function getLastId() {
+        return $this->conn->lastInsertId();
     }
 }
-
