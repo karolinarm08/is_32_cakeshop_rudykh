@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="icon" type="image/x-icon" href="./image/favicon.ico">
-    <title>Інформація</title>
+    <title>Оформлення замовлення</title>
 </head>
 
 <body>
@@ -27,7 +27,7 @@
                     <a href="./menu.html">Меню</a>
                     <a href="./index.html#about-us">Про нас</a>
                     <a href="./news.html">Новини</a>
-                    <a href="./info.html" class="active">Інформація</a>
+                    <a href="./info.html">Інформація</a>
                     <a href="./contacts.html">Контакти</a>
                 </div>
                 <div class="nav-second">
@@ -42,195 +42,917 @@
         <div id="scrollToTopBtn"></div>
         <script src="code.js"></script>
         <div class="banner">
-            <img src="./image/waves_4.png" width="100%" alt="волны">
+            <img src="./image/waves_4.png" width="100%" alt="хвилі">
         </div>
+        
         <div class="main order">
             <h2 class="title">Оформлення замовлення</h2>
-            <div class="order-details">
-                <div class="order-cards">
-                    <div class="card-container order-card">
-                        <div class="shop-cart-img">
-                            <a href="./product.html"><img class="card-img" src="./image/image 1.png"
-                                    alt="Продукт 1"></a>
+            
+            <div class="order-grid">
+                <!-- Левая колонка: Формы -->
+                <div class="order-forms">
+                    <!-- Персональные данные -->
+                    <div class="form-group">
+                        <h3>Персональні дані</h3>
+                        <div class="account-link">
+                            <span>або </span><a href="./account.html">Увійти в кабінет</a>
                         </div>
-                        <div class="card">
-                            <a href="./product.html" class="card-text">
-                                <p class="card-name">Lorem ipsum</p>
-                                <p class="card-descr">Vivamus mi sem, imperdiet vitae metus dapibus.
-                                </p>
-                            </a>
-                            <div class="card-details">
-                                <div>
-                                    <p class="weight">1 кг</p>
-                                </div>
+                        
+                        <div class="form-row">
+                            <div>
+                                <label for="lname">Прізвище*</label>
+                                <input type="text" id="lname" name="lname" class="account-input" required>
+                            </div>
+                            <div>
+                                <label for="fname">Ім'я*</label>
+                                <input type="text" id="fname" name="fname" class="account-input" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div>
+                                <label for="phnumber">Контактний телефон*</label>
+                                <input type="tel" id="phnumber" name="phnumber" class="account-input" required>
+                            </div>
+                            <div>
+                                <label for="email">Електронна пошта*</label>
+                                <input type="email" id="email" name="email" class="account-input" required>
                             </div>
                         </div>
                     </div>
-                    <div class="card-container order-card">
-                        <div class="shop-cart-img">
-                            <a href="#"><img class="card-img" src="./image/image 8.png" alt="Продукт 1"></a>
+
+                    <!-- Адрес доставки -->
+                    <div class="form-group">
+                        <h3>Адреса доставки</h3>
+                        <div id="saved-addresses" class="saved-addresses">
+                            <!-- Сохраненные адреса будут загружены здесь -->
                         </div>
-                        <div class="card">
-                            <a href="#" class="card-text">
-                                <p class="card-name">Lorem ipsum</p>
-                                <p class="card-descr">Vivamus mi sem, imperdiet vitae metus dapibus.
-                                </p>
-                            </a>
-                            <div class="card-details">
-                                <div>
-                                    <p class="weight">1 кг</p>
-                                </div>
+                        
+                        <div class="form-row">
+                            <div class="full-width">
+                                <label for="city">Місто*</label>
+                                <input type="text" id="city" name="city" class="account-input" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="full-width">
+                                <label for="street">Вулиця*</label>
+                                <input type="text" id="street" name="street" class="account-input" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row address-fields">
+                            <div>
+                                <label for="house">Будинок*</label>
+                                <input type="text" id="house" name="house" class="account-input" required>
+                            </div>
+                            <div>
+                                <label for="apartment">Квартира</label>
+                                <input type="text" id="apartment" name="apartment" class="account-input">
+                            </div>
+                            <div>
+                                <label for="floor">Поверх</label>
+                                <input type="text" id="floor" name="floor" class="account-input">
                             </div>
                         </div>
                     </div>
-                    <div class="card-container order-card">
-                        <div class="shop-cart-img">
-                            <a href="#"><img class="card-img" src="./image/image 5.png" alt="Продукт 1"></a>
-                        </div>
-                        <div class="card">
-                            <a href="#" class="card-text">
-                                <p class="card-name">Lorem ipsum</p>
-                                <p class="card-descr">Vivamus mi sem, imperdiet vitae metus dapibus,
-                                    rhoncus sollicitudin tortor.</p>
-                            </a>
-                            <div class="card-details">
-                                <div>
-                                    <p class="weight">1 кг</p>
-                                </div>
-                            </div>
+
+                    <!-- Способ оплаты -->
+                    <div class="form-group">
+                        <h3>Спосіб оплати</h3>
+                        <div class="radio-group">
+                            <label>
+                                <input type="radio" name="payment" value="card" checked> 
+                                <span>Карткою онлайн</span>
+                            </label>
+                            <label>
+                                <input type="radio" name="payment" value="cash"> 
+                                <span>Готівкою при отриманні</span>
+                            </label>
                         </div>
                     </div>
-                    <div class="card-container order-card">
-                        <div class="shop-cart-img">
-                            <a href="#"><img class="card-img" src="./image/image 6.png" alt="Продукт 1"></a>
-                        </div>
-                        <div class="card">
-                            <a href="#" class="card-text">
-                                <p class="card-name">Lorem ipsum</p>
-                                <p class="card-descr">Vivamus mi sem, imperdiet vitae metus dapibus,
-                                    rhoncus sollicitudin tortor.</p>
-                            </a>
-                            <div class="card-details">
-                                <div>
-                                    <p class="weight">1 кг</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card-container order-card">
-                        <div class="shop-cart-img">
-                            <a href="#"><img class="card-img" src="./image/image 7.png" alt="Продукт 1"></a>
-                        </div>
-                        <div class="card">
-                            <a href="#" class="card-text">
-                                <p class="card-name">Lorem ipsum</p>
-                                <p class="card-descr">Vivamus mi sem, imperdiet vitae metus dapibus,
-                                    rhoncus sollicitudin tortor.</p>
-                            </a>
-                            <div class="card-details">
-                                <div>
-                                    <p class="weight">1 кг</p>
-                                </div>
-                            </div>
+
+                    <!-- Комментарий к заказу -->
+                    <div class="form-group">
+                        <h3>Коментар до замовлення (необов'язково)</h3>
+                        <div class="full-width">
+                            <textarea id="comment" name="comment" class="text-area" rows="4" 
+                                placeholder="Наприклад: дзвонити після 18:00, залишити біля дверей..."></textarea>
                         </div>
                     </div>
                 </div>
-                <div class="info-item">
-                    <button class="info-toggle">
-                        <span>Персональні дані</span>
-                        <img src="./image/Chevron down.png" alt="Chevron">
-                    </button>
-                    <div class="info-content">
-                        <span>або </span><a href="/account.html">Увійти в кабінет</a>
-                            <form action='' class="order-personal-inf">
-                                <div>
-                                    <label for="lname">Прізвище</label><br>
-                                    <input type="text" id="lname" name="lname" maxlength="20" value="" placeholder=""
-                                        class="account-input" required><br>
-                                </div>
-                                <div>
-                                    <label for="fname">Ім’я</label><br>
-                                    <input type="text" id="fname" name="fname" maxlength="20" value="" placeholder=""
-                                        class="account-input" required><br>
-                                </div>
-                                <div>
-                                    <label for="phnumber">Контактний телефон</label><br>
-                                    <input type="tel" id="phnumber" name="phnumber" maxlength="13" value=""
-                                        placeholder="" class="account-input" required><br>
-                                </div>
-                                <div>
-                                    <label for="email">Електронна пошта</label><br>
-                                    <input type="text" id="email" name="email" maxlength="40" value=""
-                                        placeholder="ruby@gmail.com" class="account-input" required><br>
-                                </div>
+
+                <!-- Правая колонка: Корзина и итоги -->
+                <div class="order-summary">
+                    <!-- Товары в корзине -->
+                    <div class="summary-section">
+                        <h3>Ваше замовлення</h3>
+                        <div id="cartItemsContainer" class="order-cards">
+                            <p>Завантаження товарів...</p>
+                        </div>
                     </div>
-                </div>
-                <div id="privacy-policy" class="info-item">
-                    <button class="info-toggle">
-                        <span>Політика конфіденційності</span>
-                        <img src="./image/Chevron down.png" alt="Chevron">
-                    </button>
-                    <div class="info-content">
+
+                    <!-- Итоговая сумма -->
+                    <div class="summary-section">
+                        <h3>Підсумок</h3>
+                        <div class="price-summary">
+                            <div class="price-row">
+                                <span>Вартість товарів:</span>
+                                <span id="subtotal">0.00 грн</span>
+                            </div>
+                            <div class="price-row">
+                                <span>Доставка:</span>
+                                <span id="delivery-price">0.00 грн</span>
+                            </div>
+                            <div class="price-row total">
+                                <span>До сплати:</span>
+                                <span id="total-price">0.00 грн</span>
+                            </div>
+                        </div>
                     </div>
-                </div>
-                <div id="terms-of-use" class="info-item">
-                    <button class="info-toggle">
-                        <span>Умови користування</span>
-                        <img src="./image/Chevron down.png" alt="Chevron">
-                    </button>
-                    <div class="info-content">
+
+                    <!-- Соглашения -->
+                    <div class="summary-section">
+                        <div class="checkbox-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="consent" name="consent" required>
+                                <span class="checkbox-text">Даю згоду на обробку персональних даних*</span>
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="no-call" name="no_call">
+                                <span class="checkbox-text">Не дзвонити для підтвердження</span>
+                            </label>
+                        </div>
                     </div>
-                </div>
-                <div id="cookie-policy" class="info-item">
-                    <button class="info-toggle">
-                        <span>Політика використання файлів cookie</span>
-                        <img src="./image/Chevron down.png" alt="Chevron">
-                    </button>
-                    <div class="info-content">
+
+                    <!-- Кнопка подтверждения -->
+                    <div class="summary-section">
+                        <button type="button" class="confirm-button" onclick="submitOrder()">
+                            Підтвердити замовлення
+                        </button>
+                        <p id="orderMessage" class="order-message"></p>
                     </div>
                 </div>
             </div>
         </div>
     </main>
     <div id="footer"></div>
-    <script>
-        document.querySelectorAll(".info-toggle").forEach(button => {
-            button.addEventListener("click", function () {
-                const parent = this.parentElement; // Знаходимо батьківський елемент
-                const content = parent.querySelector(".info-content");
-                const img = this.querySelector("img");
 
-                // Переключення відображення контенту
-                if (content.style.display === "block") {
-                    content.style.display = "none";
-                    img.setAttribute("src", "./image/Chevron down.png");
+    <style>
+        /* Основные стили для новой структуры (оставлены, так как они относятся к макету страницы заказа) */
+        .order-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 30px;
+            margin-top: 20px;
+        }
+
+        @media (min-width: 992px) {
+            .order-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .order-forms {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .form-group {
+            background: var(--color-white);
+            border-radius: var(--card-border);
+            padding: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            border: 1px solid var(--color-grey-light);
+        }
+
+        .form-group h3 {
+            color: var(--color-purple);
+            margin-bottom: 20px;
+            font-size: 20px;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .form-row > div {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .full-width {
+            width: 100%;
+            flex: 1 0 100%;
+        }
+
+        .address-fields > div {
+            flex: 1;
+            min-width: 120px;
+        }
+
+        .account-link {
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .account-link a {
+            color: var(--color-blue);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .account-link a:hover {
+            text-decoration: underline;
+        }
+
+        .account-input, .text-area {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid var(--color-grey-light);
+            border-radius: var(--button-border);
+            font-family: "Montserrat", sans-serif;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .account-input:focus, .text-area:focus {
+            outline: none;
+            border-color: var(--color-purple);
+            box-shadow: 0 0 0 2px rgba(127, 75, 147, 0.1);
+        }
+
+        .text-area {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .radio-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .radio-group label {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .radio-group input[type="radio"] {
+            margin-right: 10px;
+            width: 18px;
+            height: 18px;
+        }
+
+        /* Правая колонка */
+        .order-summary {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+            position: sticky;
+            top: 100px;
+        }
+
+        .summary-section {
+            background: var(--color-white);
+            border-radius: var(--card-border);
+            padding: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            border: 1px solid var(--color-grey-light);
+        }
+
+        /* КОНТЕЙНЕР ДЛЯ КАРТОЧЕК В ЗАКАЗЕ: ИЗМЕНЕНО НА ГОРИЗОНТАЛЬНУЮ ПРОКРУТКУ */
+        .order-cards {
+            display: flex;
+            flex-direction: row; /* Изменено с column на row */
+            flex-wrap: nowrap; /* Запрет переноса строк */
+            gap: 15px; /* Увеличим отступ между карточками */
+            overflow-x: auto; /* Горизонтальная прокрутка */
+            overflow-y: hidden; /* Убираем вертикальную прокрутку */
+            padding-bottom: 15px; /* Добавляем отступ для полосы прокрутки */
+            
+            /* Убираем ненужные ограничения, так как прокрутка уже есть */
+            max-height: none; 
+            padding-right: 0; 
+        }
+
+        /* Убираем стили прокрутки Y, оставляем только для X */
+        .order-cards::-webkit-scrollbar {
+            height: 10px; /* Уменьшаем высоту полосы прокрутки X */
+            width: 6px; /* Ширина полосы прокрутки Y (если бы она была) */
+        }
+        
+        .order-cards::-webkit-scrollbar-thumb {
+             background-color: var(--color-purple-light);
+             border-radius: 100px;
+        }
+        
+        /* СТИЛЬ ДЛЯ САМОЙ КАРТОЧКИ: Используем .card-container из style.css и добавляем класс для адаптации */
+        .order-card-small {
+            /* 1. Ограничиваем максимальную ширину для компактности */
+            max-width: 250px; 
+            flex-shrink: 0; /* Запрещаем сжимать карточку меньше max-width */
+            margin-right: 0; /* Убираем лишний margin-right */
+            
+            /* Используем стили .card-container из style.css, но уменьшаем размеры текста */
+            width: 100%; 
+            transition: box-shadow 0.4s ease-in-out;
+            background-color: var(--color-background); 
+            border: 0; 
+        }
+
+        /* Адаптируем размеры карточек на маленьких экранах, чтобы они снова занимали всю ширину */
+        @media (max-width: 992px) {
+            .order-card-small {
+                max-width: 45%; /* Уменьшаем до 45% ширины контейнера на средних экранах */
+                min-width: 180px; /* Минимальная ширина, чтобы карточка не была слишком узкой */
+                align-self: stretch;
+            }
+        }
+        
+        @media (max-width: 500px) {
+            .order-card-small {
+                max-width: 60%; /* На очень маленьких экранах делаем их немного шире */
+                min-width: 150px; 
+            }
+        }
+
+
+        .order-card-small:hover {
+            box-shadow: 0px 0px 10px 4px rgba(73, 129, 147, 0.2);
+        }
+        
+        /* Переопределяем стили текста для компактности */
+        .order-card-small .card-name {
+            font-size: 16px; 
+            line-height: 1.2;
+            margin-bottom: 2px;
+        }
+        
+        /* Адаптируем описание/количество */
+        .order-card-small .card-descr {
+            font-size: 12px; 
+            -webkit-line-clamp: 1; 
+            opacity: 0.8;
+            margin-bottom: 4px; /* Небольшой отступ */
+        }
+
+        /* Адаптируем контейнер деталей, чтобы цена выглядела аккуратно */
+        .order-card-small .card-details {
+            margin-top: 5px;
+        }
+        
+        .order-card-small .card-weight {
+            font-size: 14px; 
+        }
+
+        .order-card-small .card-price {
+            font-size: 20px; /* Уменьшаем цену */
+            font-weight: 700;
+        }
+        
+        /* Конец адаптивных стилей карточки товара для Order */
+
+
+        .price-summary {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .price-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--color-grey-light);
+        }
+
+        .price-row.total {
+            font-weight: 700;
+            font-size: 18px;
+            color: var(--color-purple);
+            border-bottom: none;
+            padding-top: 15px;
+            border-top: 2px solid var(--color-purple-light);
+        }
+
+        .checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: flex-start;
+            cursor: pointer;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        .checkbox-label input[type="checkbox"] {
+            margin-right: 10px;
+            margin-top: 3px;
+            width: 16px;
+            height: 16px;
+        }
+
+        .checkbox-text {
+            flex: 1;
+        }
+
+        .confirm-button {
+            width: 100%;
+            padding: 16px;
+            background: var(--color-purple);
+            color: var(--color-white);
+            border: none;
+            border-radius: var(--button-border);
+            font-family: "Montserrat", sans-serif;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 10px;
+        }
+
+        .confirm-button:hover {
+            background: var(--color-purple-light);
+        }
+
+        .confirm-button:disabled {
+            background: var(--color-grey-light);
+            cursor: not-allowed;
+        }
+
+        .order-message {
+            text-align: center;
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: var(--button-border);
+            font-size: 14px;
+        }
+
+        .order-message.success {
+            background: #e8f5e9;
+            color: #2e7d32;
+            border: 1px solid #a5d6a7;
+        }
+
+        .order-message.error {
+            background: #ffebee;
+            color: #c62828;
+            border: 1px solid #ef9a9a;
+        }
+
+        .order-message.info {
+            background: #e3f2fd;
+            color: #1565c0;
+            border: 1px solid #90caf9;
+        }
+
+        /* Сохраненные адреса */
+        .saved-addresses {
+            margin-bottom: 20px;
+        }
+
+        .saved-address-item {
+            padding: 12px;
+            margin-bottom: 10px;
+            border: 1px solid var(--color-grey-light);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .saved-address-item:hover {
+            border-color: var(--color-purple);
+            background: #f9f5ff;
+        }
+
+        .saved-address-item.selected {
+            border-color: var(--color-purple);
+            background: #f3e5f5;
+        }
+
+        .saved-address-text {
+            font-size: 14px;
+            color: var(--color-black);
+        }
+
+        .saved-address-use {
+            display: inline-block;
+            margin-top: 5px;
+            font-size: 12px;
+            color: var(--color-blue);
+            text-decoration: underline;
+            cursor: pointer;
+        }
+
+        /* Мобильная адаптация */
+        @media (max-width: 991px) {
+            .order-grid {
+                gap: 20px;
+            }
+
+            .form-group {
+                padding: 20px;
+            }
+
+            .form-row {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .form-row > div {
+                min-width: 100%;
+            }
+
+            .order-summary {
+                position: static;
+            }
+        }
+
+        @media (max-width: 767px) {
+            /* Адаптивные стили для order-card-small, если она становится слишком широкой на мобильном */
+            .order-card-small {
+                max-width: 100%; 
+            }
+        }
+    </style>
+
+    <script>
+        // Конфигурация API
+        const API_BASE = window.location.pathname.includes('/frontend/') ? '../backend/api/' : '/backend/api/';
+        const API_CART_URL = API_BASE + 'cart.php';
+        const API_ORDER_URL = API_BASE + 'order.php';
+        const API_USER_URL = API_BASE + 'user.php';
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadUserData();
+            loadCartItems();
+            loadSavedAddresses();
+            setupFormValidation();
+        });
+
+        // Загружаем данные пользователя
+        function loadUserData() {
+            const userDataStr = localStorage.getItem('user_data');
+            if (!userDataStr) {
+                showMessage('Будь ласка, увійдіть в акаунт для оформлення замовлення', 'error');
+                setTimeout(() => window.location.href = 'account.html', 2000);
+                return;
+            }
+
+            const userData = JSON.parse(userDataStr);
+            
+            // Заполняем форму данными пользователя
+            document.getElementById('fname').value = userData.first_name || '';
+            document.getElementById('lname').value = userData.last_name || '';
+            document.getElementById('phnumber').value = userData.phone || '';
+            document.getElementById('email').value = userData.email || '';
+        }
+
+        // Загружаем товары из корзины
+        function loadCartItems() {
+            const userDataStr = localStorage.getItem('user_data');
+            if (!userDataStr) return;
+
+            const userEmail = JSON.parse(userDataStr).email;
+            
+            fetch(API_CART_URL + '?action=get', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: userEmail })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    if (data.items && data.items.length > 0) {
+                        renderCartItems(data.items);
+                        updateSummary(data.total || 0, data.items.length);
+                    } else {
+                        document.getElementById('cartItemsContainer').innerHTML = 
+                            '<p style="text-align: center; color: var(--color-grey-dark);">Кошик порожній</p>';
+                        updateSummary(0, 0);
+                    }
                 } else {
-                    content.style.display = "block";
-                    img.setAttribute("src", "./image/Chevron up.png");
+                    showMessage('Помилка завантаження кошика: ' + data.message, 'error');
+                }
+            })
+            .catch(err => {
+                console.error('Error loading cart:', err);
+                showMessage('Помилка завантаження кошика', 'error');
+            });
+        }
+
+        // Отображаем товары из корзины
+        function renderCartItems(items) {
+            const container = document.getElementById('cartItemsContainer');
+            container.innerHTML = '';
+
+            items.forEach(item => {
+                // Используем .card-img для стиля изображения
+                const imgUrl = item.image_url || './image/placeholder.png'; 
+                const itemTotal = (item.price * item.quantity).toFixed(2);
+                
+                // ИСПОЛЬЗУЕМ КЛАССЫ ИЗ style.css: card-container, card, card-img и т.д.
+                // Добавляем order-card-small для применения компактных стилей.
+                const itemHtml = `
+                <div class="card-container order-card-small">
+                    <img class="card-img" src="${imgUrl}" 
+                         onerror="this.onerror=null;this.src='./image/placeholder.png';"
+                         alt="${item.name}">
+                    <div class="card">
+                        <div class="card-text">
+                            <p class="card-name">${item.name}</p>
+                            <!-- Используем card-descr, чтобы показать цену за единицу и количество -->
+                            <p class="card-descr">${item.price} грн × ${item.quantity} шт.</p>
+                        </div>
+                        <div class="card-details">
+                            <!-- Используем класс card-weight, как в меню -->
+                            <p class="card-weight">${item.weight || '1'} кг</p> 
+                            <!-- Отображаем общую сумму за этот товар -->
+                            <p class="card-price">${itemTotal} грн</p>
+                        </div>
+                    </div>
+                </div>
+                `;
+                container.innerHTML += itemHtml;
+            });
+        }
+
+        // Обновляем итоговую сумму
+        function updateSummary(subtotal, itemCount) {
+            const delivery = itemCount > 0 ? 50 : 0; // Доставка 50 грн
+            const total = subtotal + delivery;
+            
+            document.getElementById('subtotal').textContent = subtotal.toFixed(2) + ' грн';
+            document.getElementById('delivery-price').textContent = delivery.toFixed(2) + ' грн';
+            document.getElementById('total-price').textContent = total.toFixed(2) + ' грн';
+        }
+
+        // Загружаем сохраненные адреса
+        function loadSavedAddresses() {
+            const userDataStr = localStorage.getItem('user_data');
+            if (!userDataStr) return;
+
+            const userEmail = JSON.parse(userDataStr).email;
+            
+            fetch(API_USER_URL + '?action=getAddresses', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: userEmail })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success && data.addresses && data.addresses.length > 0) {
+                    renderSavedAddresses(data.addresses);
+                }
+            })
+            .catch(err => console.error('Error loading addresses:', err));
+        }
+
+        // Отображаем сохраненные адреса
+        function renderSavedAddresses(addresses) {
+            const container = document.getElementById('saved-addresses');
+            container.innerHTML = '<h4>Збережені адреси:</h4>';
+
+            addresses.forEach(addr => {
+                const addressText = `${addr.city}, ${addr.street}, ${addr.house}${addr.apartment ? ', кв. ' + addr.apartment : ''}`;
+                const addressHtml = `
+                <div class="saved-address-item" data-address-id="${addr.id}">
+                    <div class="saved-address-text">${addressText}</div>
+                    <span class="saved-address-use" onclick="useAddress(${addr.id})">Використати цю адресу</span>
+                </div>
+                `;
+                container.innerHTML += addressHtml;
+            });
+        }
+
+        // Использовать сохраненный адрес
+        function useAddress(addressId) {
+            const userDataStr = localStorage.getItem('user_data');
+            if (!userDataStr) return;
+
+            const userEmail = JSON.parse(userDataStr).email;
+            
+            fetch(API_USER_URL + '?action=getAddress', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: userEmail, address_id: addressId })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success && data.address) {
+                    const addr = data.address;
+                    document.getElementById('city').value = addr.city || '';
+                    document.getElementById('street').value = addr.street || '';
+                    document.getElementById('house').value = addr.house || '';
+                    document.getElementById('apartment').value = addr.apartment || '';
+                    document.getElementById('floor').value = addr.floor || '';
+                    
+                    // Выделяем выбранный адрес
+                    document.querySelectorAll('.saved-address-item').forEach(el => {
+                        el.classList.remove('selected');
+                        if (el.dataset.addressId == addressId) {
+                            el.classList.add('selected');
+                        }
+                    });
+                }
+            })
+            .catch(err => console.error('Error loading address:', err));
+        }
+
+        // Настройка валидации формы
+        function setupFormValidation() {
+            const form = document.querySelector('.order-forms');
+            const inputs = form.querySelectorAll('input[required], textarea[required]');
+            
+            inputs.forEach(input => {
+                input.addEventListener('blur', () => validateField(input));
+                input.addEventListener('input', () => clearFieldError(input));
+            });
+        }
+
+        // Валидация поля
+        function validateField(field) {
+            const value = field.value.trim();
+            let isValid = true;
+            let message = '';
+
+            if (field.hasAttribute('required') && !value) {
+                isValid = false;
+                message = 'Це поле обов\'язкове для заповнення';
+            } else if (field.type === 'email' && value && !isValidEmail(value)) {
+                isValid = false;
+                message = 'Введіть коректний email';
+            } else if (field.id === 'phnumber' && value && !isValidPhone(value)) {
+                isValid = false;
+                message = 'Введіть коректний номер телефону';
+            }
+
+            if (!isValid) {
+                showFieldError(field, message);
+            } else {
+                clearFieldError(field);
+            }
+
+            return isValid;
+        }
+
+        // Проверка email
+        function isValidEmail(email) {
+            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+        }
+
+        // Проверка телефона
+        function isValidPhone(phone) {
+            return /^[\+]?[0-9]{10,13}$/.test(phone.replace(/\s/g, ''));
+        }
+
+        // Показать ошибку поля
+        function showFieldError(field, message) {
+            clearFieldError(field);
+            
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'field-error';
+            errorDiv.textContent = message;
+            errorDiv.style.color = 'var(--color-red)';
+            errorDiv.style.fontSize = '12px';
+            errorDiv.style.marginTop = '5px';
+            
+            field.style.borderColor = 'var(--color-red)';
+            field.parentNode.appendChild(errorDiv);
+        }
+
+        // Очистить ошибку поля
+        function clearFieldError(field) {
+            field.style.borderColor = '';
+            
+            const errorDiv = field.parentNode.querySelector('.field-error');
+            if (errorDiv) {
+                errorDiv.remove();
+            }
+        }
+
+        // Проверка всей формы
+        function validateForm() {
+            const requiredFields = document.querySelectorAll('input[required], textarea[required]');
+            let isValid = true;
+
+            requiredFields.forEach(field => {
+                if (!validateField(field)) {
+                    isValid = false;
                 }
             });
-        });
 
-        // Перевіряємо, чи є фрагмент (#) у URL
-        document.addEventListener("DOMContentLoaded", () => {
-            const fragment = window.location.hash; // Отримуємо фрагмент (#delivery-and-payment)
-
-            if (fragment) {
-                const targetSection = document.querySelector(fragment); // Знаходимо елемент із ID
-                if (targetSection) {
-                    // Відкриваємо секцію, якщо вона існує
-                    const button = targetSection.querySelector(".info-toggle"); // Знаходимо кнопку
-                    const content = targetSection.querySelector(".info-content");
-                    const img = button.querySelector("img");
-
-                    content.style.display = "block"; // Відкриваємо контент
-                    img.setAttribute("src", "./image/Chevron up.png"); // Міняємо іконку
-
-                    // Прокрутка до елемента з ID
-                    targetSection.scrollIntoView({ behavior: "smooth", block: "start" });
-                }
+            if (!document.getElementById('consent').checked) {
+                showMessage('Потрібно дати згоду на обробку персональних даних', 'error');
+                isValid = false;
             }
-        });
+
+            return isValid;
+        }
+
+        // Отправка заказа
+        function submitOrder() {
+            if (!validateForm()) {
+                return;
+            }
+
+            const userDataStr = localStorage.getItem('user_data');
+            if (!userDataStr) {
+                showMessage('Будь ласка, увійдіть в акаунт', 'error');
+                return;
+            }
+
+            const userData = JSON.parse(userDataStr);
+            
+            // Собираем данные формы
+            const orderData = {
+                email: userData.email,
+                personalData: {
+                    first_name: document.getElementById('fname').value.trim(),
+                    last_name: document.getElementById('lname').value.trim(),
+                    phone: document.getElementById('phnumber').value.trim(),
+                    email: document.getElementById('email').value.trim()
+                },
+                deliveryAddress: {
+                    city: document.getElementById('city').value.trim(),
+                    street: document.getElementById('street').value.trim(),
+                    house: document.getElementById('house').value.trim(),
+                    apartment: document.getElementById('apartment').value.trim(),
+                    floor: document.getElementById('floor').value.trim()
+                },
+                paymentMethod: document.querySelector('input[name="payment"]:checked').value,
+                comment: document.getElementById('comment').value.trim(),
+                consentDataProcessing: document.getElementById('consent').checked,
+                // ИСПРАВЛЕНИЕ: Удален лишний 'document:'
+                noCall: document.getElementById('no-call').checked
+            };
+
+            // Показываем загрузку
+            showMessage('Обробка замовлення...', 'info');
+
+            // Отправляем запрос
+            fetch(API_ORDER_URL + '?action=create', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(orderData)
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    showMessage(`✅ Замовлення #${data.order_id} успішно оформлено!`, 'success');
+                    
+                    // Блокируем форму
+                    document.querySelector('.confirm-button').disabled = true;
+                    
+                    // Перенаправляем через 3 секунды
+                    setTimeout(() => {
+                        window.location.href = `account.html?orderSuccess=${data.order_id}`;
+                    }, 3000);
+                } else {
+                    showMessage('❌ Помилка: ' + data.message, 'error');
+                }
+            })
+            .catch(err => {
+                console.error('Order error:', err);
+                showMessage('❌ Помилка мережі. Спробуйте ще раз.', 'error');
+            });
+        }
+
+        // Показать сообщение
+        function showMessage(text, type = 'info') {
+            const messageEl = document.getElementById('orderMessage');
+            messageEl.textContent = text;
+            messageEl.className = `order-message ${type}`;
+            
+            // Автоскрытие для информационных сообщений
+            if (type === 'info') {
+                setTimeout(() => {
+                    if (messageEl.textContent === text) {
+                        messageEl.textContent = '';
+                        messageEl.className = 'order-message';
+                    }
+                }, 5000);
+            }
+        }
+
+        // Функция для мобильного меню
+        function myFunction() {
+            const nav = document.getElementById("nav");
+            nav.className = nav.className === "topnav" ? "topnav responsive" : "topnav";
+        }
     </script>
 </body>
 

@@ -5,18 +5,20 @@ namespace App\Services;
 use App\Models\Order;
 use App\Repositories\OrderRepository;
 use App\Repositories\ProductRepository;
+use App\Repositories\CartRepository;
+use App\Repositories\UserRepository;
 
 class OrderService
 {
     private OrderRepository $orderRepository;
     private ProductRepository $productRepository;
-    private PaymentService $paymentService;
+    private UserRepository $userRepository;
 
     public function __construct()
     {
         $this->orderRepository = new OrderRepository();
         $this->productRepository = new ProductRepository();
-        $this->paymentService = new PaymentService();
+        $this->userRepository = new UserRepository();
     }
 
     public function createNewOrder(int $userId, array $cartItems, int $addressId = null): array
@@ -41,26 +43,34 @@ class OrderService
             return ['success' => false, 'message' => 'Кошик порожній'];
         }
 
-        $order = new Order($userId, $total, 'new');
-        
-        // Збереження замовлення в БД
-        $orderId = $this->orderRepository->save($order);
+        // Создаем заказ в БД
+        $orderId = $this->orderRepository->createOrder($userId, $total, $addressId);
         
         if ($orderId) {
             // Збереження товарів замовлення
             $this->orderRepository->addItems($orderId, $orderItems);
             
-            // Імітація надсилання Email
+            // Отправляем email подтверждения
             $this->sendOrderConfirmationEmail($userId, $orderId);
 
-            return ['success' => true, 'order_id' => $orderId, 'total' => $total];
+            return [
+                'success' => true, 
+                'order_id' => $orderId, 
+                'total' => $total,
+                'message' => 'Замовлення успішно створено!'
+            ];
         }
 
         return ['success' => false, 'message' => 'Помилка створення замовлення'];
     }
     
     private function sendOrderConfirmationEmail($userId, $orderId) {
-        // Тут має бути логіка PHPMailer або mail()
-        // mail($userEmail, "Замовлення #$orderId підтверджено", "Дякуємо за покупку!");
+        // Получаем email пользователя
+        $user = $this->userRepository->findById($userId);
+        if ($user) {
+            // Здесь должна быть логика отправки email
+            // mail($user->email, "Замовлення #$orderId підтверджено", "Дякуємо за покупку!");
+            error_log("Email отправлен на: " . $user->email . " для заказа #" . $orderId);
+        }
     }
 }

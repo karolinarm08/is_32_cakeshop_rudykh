@@ -157,7 +157,15 @@
         });
     }
 
-    function goToOrder() {
+        function goToOrder() {
+        const userDataStr = localStorage.getItem('user_data');
+        if (!userDataStr) {
+            alert('Будь ласка, увійдіть в акаунт для оформлення замовлення');
+            window.location.href = 'account.html';
+            return;
+        }
+
+        // Переходим на страницу оформления заказа
         window.location.href = 'order.html';
     }
 </script>
