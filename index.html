@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RUBY - Головна</title> 
+    <!-- Підключення шрифтів та стилів -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
@@ -10,8 +12,52 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="style.css">
     <link rel="icon" type="image/x-icon" href="./image/favicon.ico">
-
-    <title>Головна</title> 
+    <style>
+        /* Стилі модального вікна */
+        .modal-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.5); z-index: 2000;
+            justify-content: center; align-items: center; opacity: 0; transition: opacity 0.3s ease;
+        }
+        .modal-overlay.open { display: flex; opacity: 1; }
+        .auth-modal {
+            background-color: #ffffff; width: 90%; max-width: 400px;
+            border-radius: 20px; padding: 30px; position: relative;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            transform: translateY(-20px); transition: transform 0.3s ease;
+        }
+        .modal-overlay.open .auth-modal { transform: translateY(0); }
+        .modal-close {
+            position: absolute; top: 15px; right: 20px; font-size: 28px;
+            color: #747474; cursor: pointer; background: none; border: none;
+        }
+        .auth-tabs { display: flex; margin-bottom: 20px; border-bottom: 2px solid #D9D9D9; }
+        .auth-tab {
+            flex: 1; text-align: center; padding: 10px; font-size: 18px; font-weight: 600;
+            color: #747474; cursor: pointer; background: none; border: none; outline: none;
+        }
+        .auth-tab.active { color: #7F4B93; border-bottom: 2px solid #7F4B93; margin-bottom: -2px; }
+        .auth-form { display: none; flex-direction: column; gap: 15px; }
+        .auth-form.active { display: flex; }
+        .form-group { display: flex; flex-direction: column; gap: 5px; }
+        .form-group label { font-size: 14px; color: #747474; }
+        .form-group input {
+            padding: 12px; border: 1px solid #D9D9D9; border-radius: 10px;
+            font-size: 16px; width: 100%; font-family: "Montserrat", sans-serif;
+        }
+        .auth-btn {
+            background-color: #7F4B93; color: white; padding: 14px; border: none;
+            border-radius: 10px; font-size: 16px; font-weight: 600; cursor: pointer;
+            margin-top: 10px; font-family: "Montserrat", sans-serif; transition: background 0.3s;
+        }
+        .auth-btn:hover { background-color: #B884CB; }
+        .message-box {
+            padding: 10px; margin-bottom: 15px; border-radius: 8px; font-size: 14px;
+            display: none; text-align: center; word-break: break-word;
+        }
+        .message-error { background-color: #ffebee; color: #c62828; border: 1px solid #ffcdd2; }
+        .message-success { background-color: #e8f5e9; color: #2e7d32; border: 1px solid #c8e6c9; }
+    </style>
 </head>
 <body>
 <header>
@@ -29,7 +75,7 @@
                 <a href="./contacts.html">Контакти</a>
             </div>
             <div class="nav-second">
-                <a href="./account.html"><i class="fa fa-user" aria-hidden="true"></i></a>
+                <a href="#" id="accountBtn"><i class="fa fa-user" aria-hidden="true"></i></a>
                 <a href="./shoppingcart.html"><i class="fa fa-shopping-cart" aria-hidden="true"></i></a>
             </div>
         </div>   
@@ -43,7 +89,8 @@
         <img src="./image/main_banner2.png" width="100%" alt="банер">
         <img src="./image/waves_1.png" width="100%" style="margin-top: -100px;" alt="волны">
     </div>
-    <div>
+    
+<div>
         <!-- Новинки -->
         <section id="new-products" class="new-products">
             <div class="main-container">
@@ -308,6 +355,212 @@
         </section>
     </div>
 </main>
+
 <div id="footer"></div>
+
+<!-- МОДАЛЬНЕ ВІКНО АВТОРИЗАЦІЇ -->
+<div id="authModal" class="modal-overlay">
+    <div class="auth-modal">
+        <button class="modal-close" onclick="closeModal()">&times;</button>
+        
+        <div class="auth-tabs">
+            <button class="auth-tab active" onclick="switchTab('login')">Вхід</button>
+            <button class="auth-tab" onclick="switchTab('register')">Реєстрація</button>
+        </div>
+
+        <div id="authMessage" class="message-box"></div>
+
+        <!-- Форма Входу -->
+        <form id="loginForm" class="auth-form active">
+            <div class="form-group">
+                <label for="loginEmail">Email</label>
+                <input type="email" id="loginEmail" placeholder="example@gmail.com" required>
+            </div>
+            <div class="form-group">
+                <label for="loginPassword">Пароль</label>
+                <input type="password" id="loginPassword" placeholder="Ваш пароль" required>
+            </div>
+            <button type="submit" class="auth-btn">Увійти</button>
+        </form>
+
+        <!-- Форма Реєстрації -->
+        <form id="registerForm" class="auth-form">
+            <div class="form-group">
+                <label for="regName">Ім'я</label>
+                <input type="text" id="regName" placeholder="Як вас звати?" required>
+            </div>
+            <div class="form-group">
+                <label for="regEmail">Email</label>
+                <input type="email" id="regEmail" placeholder="example@gmail.com" required>
+            </div>
+            <div class="form-group">
+                <label for="regPassword">Пароль</label>
+                <input type="password" id="regPassword" placeholder="Придумайте пароль" required>
+            </div>
+            <div class="form-group">
+                <label for="regConfirm">Підтвердження</label>
+                <input type="password" id="regConfirm" placeholder="Повторіть пароль" required>
+            </div>
+            <button type="submit" class="auth-btn">Зареєструватися</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    // =========================================================
+    // НАЛАШТУВАННЯ API URL
+    // Спробуйте змінити цей шлях, якщо виникає помилка 404
+    // =========================================================
+    
+    // ВАРІАНТ 1: Абсолютний шлях (найбільш надійний)
+    // Якщо ваш сайт лежить в папці (наприклад, my-shop), додайте її: /my-shop/backend/api/auth.php
+    let API_URL = '/backend/api/auth.php'; 
+
+    // АВТОМАТИЧНА ПЕРЕВІРКА (Спроба "вгадати" правильний шлях)
+    // Якщо ми в папці /frontend/, то треба піднятися на рівень вище
+    if (window.location.pathname.includes('/frontend/')) {
+        API_URL = '../backend/api/auth.php';
+    }
+    
+    // Для InfinityFree часто структура така: /htdocs/frontend/... 
+    // Тоді для сайту це виглядає як site.com/frontend/index.html
+    // І правильний шлях: ../backend/api/auth.php
+
+    console.log("Using API URL:", API_URL); // Перевірте консоль браузера (F12)
+
+    // =========================================================
+
+    const modal = document.getElementById('authModal');
+    const accountBtn = document.getElementById('accountBtn');
+    const authMessage = document.getElementById('authMessage');
+
+    function isAuthenticated() {
+        return localStorage.getItem('user_logged_in') === 'true';
+    }
+
+    accountBtn.addEventListener('click', function(e) {
+        e.preventDefault(); 
+        if (isAuthenticated()) {
+            window.location.href = "./account.html";
+        } else {
+            openModal();
+        }
+    });
+
+    function openModal() {
+        modal.classList.add('open');
+        document.body.style.overflow = 'hidden'; 
+    }
+
+    function closeModal() {
+        modal.classList.remove('open');
+        document.body.style.overflow = '';
+        authMessage.style.display = 'none';
+    }
+
+    modal.addEventListener('click', function(e) {
+        if (e.target === modal) closeModal();
+    });
+
+    function switchTab(tabName) {
+        const tabs = document.querySelectorAll('.auth-tab');
+        const forms = document.querySelectorAll('.auth-form');
+        
+        tabs.forEach(tab => tab.classList.remove('active'));
+        forms.forEach(form => form.classList.remove('active'));
+        authMessage.style.display = 'none';
+
+        if (tabName === 'login') {
+            document.querySelector(`button[onclick="switchTab('login')"]`).classList.add('active');
+            document.getElementById('loginForm').classList.add('active');
+        } else {
+            document.querySelector(`button[onclick="switchTab('register')"]`).classList.add('active');
+            document.getElementById('registerForm').classList.add('active');
+        }
+    }
+
+    function showMsg(msg, type) {
+        authMessage.textContent = msg;
+        authMessage.className = 'message-box ' + (type === 'error' ? 'message-error' : 'message-success');
+        authMessage.style.display = 'block';
+    }
+
+    async function sendAuthRequest(action, data) {
+        try {
+            const response = await fetch(API_URL + '?action=' + action, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+
+            // Перевірка на HTML відповідь (помилка 404 або 500)
+            const contentType = response.headers.get("content-type");
+            if (!contentType || !contentType.includes("application/json")) {
+                const text = await response.text();
+                console.error("Server returned non-JSON:", text);
+                if (response.status === 404) {
+                    throw new Error(`Файл не знайдено (404) за адресою: ${API_URL}`);
+                }
+                throw new Error("Сервер повернув невірний формат даних (можливо, помилка PHP). Перевірте консоль.");
+            }
+
+            const result = await response.json();
+            return result;
+
+        } catch (error) {
+            console.error('Fetch error:', error);
+            throw error;
+        }
+    }
+
+    // Реєстрація
+    document.getElementById('registerForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const name = document.getElementById('regName').value;
+        const email = document.getElementById('regEmail').value;
+        const password = document.getElementById('regPassword').value;
+        const confirm = document.getElementById('regConfirm').value;
+
+        if (password !== confirm) {
+            showMsg('Паролі не співпадають!', 'error');
+            return;
+        }
+
+        sendAuthRequest('register', { name, email, password })
+            .then(data => {
+                if (data.success) {
+                    showMsg('Реєстрація успішна! Увійдіть.', 'success');
+                    setTimeout(() => {
+                        document.getElementById('registerForm').reset();
+                        switchTab('login');
+                        document.getElementById('loginEmail').value = email;
+                    }, 1500);
+                } else {
+                    showMsg(data.message, 'error');
+                }
+            })
+            .catch(err => showMsg(err.message, 'error'));
+    });
+
+    // Вхід
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const email = document.getElementById('loginEmail').value;
+        const password = document.getElementById('loginPassword').value;
+
+        sendAuthRequest('login', { email, password })
+            .then(data => {
+                if (data.success) {
+                    localStorage.setItem('user_logged_in', 'true');
+                    localStorage.setItem('user_data', JSON.stringify(data.user));
+                    showMsg('Вхід успішний! Перенаправлення...', 'success');
+                    setTimeout(() => { window.location.href = './account.html'; }, 1000);
+                } else {
+                    showMsg(data.message, 'error');
+                }
+            })
+            .catch(err => showMsg(err.message, 'error'));
+    });
+</script>
 </body>
 </html>

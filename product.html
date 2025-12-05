@@ -10,7 +10,8 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="icon" type="image/x-icon" href="./image/favicon.ico">
-    <title>*</title>        
+    <!-- Додано ID для динамічної назви сторінки -->
+    <title id="productTitle">*</title>
 </head>
 <body>
 <header>
@@ -31,20 +32,31 @@
                 <a href="./account.html"><i class="fa fa-user" aria-hidden="true"></i></a>
                 <a href="./shoppingcart.html"><i class="fa fa-shopping-cart" aria-hidden="true"></i></a>
             </div>
-        </div>
+        </div>   
     </nav>
 </header>
 
 <main>
     <div id="scrollToTopBtn"></div>
     <script src="code.js"></script>
+    
+    <!-- Заглушка для завантаження -->
+    <div id="loadingOverlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.9); z-index: 1000; display: none; justify-content: center; align-items: center; flex-direction: column; color: #4A148C; font-size: 1.5rem;">
+        <i class="fa fa-spinner fa-spin text-4xl mb-4"></i>
+        <span>Завантаження...</span>
+        <!-- Додаємо елемент для виводу помилки на екран -->
+        <p id="errorDisplay" style="color: red; font-size: 0.8em; margin-top: 10px; display: none; text-align: center; max-width: 90%;"></p>
+        <!-- Додаємо елемент для виводу повідомлень про успіх/помилку кошика -->
+        <div id="cartMessage" style="color: #4CAF50; font-size: 1em; margin-top: 10px; display: none; text-align: center; max-width: 90%; padding: 10px; border: 1px solid; border-radius: 5px;"></div>
+    </div>
+    
     <div class="banner">
         <img src="./image/waves_4.png" width="100%" alt="волны">
     </div>
     <div>
         <div class="product-panel-buttons">
-            <a href="./menu.html#1" class="come-back-arrow">
-                <img src="./image/Arrow 1.svg">
+            <a href="./menu.html" class="come-back-arrow">
+                <img src="./image/Arrow 1.svg" alt="Повернутись">
                 <p>повернутись</p>
             </a>
             <div class="change-buttons">
@@ -52,158 +64,299 @@
                 <button class="change-button">Видалити</button>
             </div>
         </div>
-        <section class="product">                
+        <section class="product">
             <div class="product-images">
-                <img id="selectedImage" src="./image/image 1 5.png" alt="Selected Cake">
+                <!-- Додано ID для динамічного оновлення -->
+                <img id="selectedImage" src="./image/image 1 5.png" alt="Selected Cake" onerror="this.src='./image/placeholder.png';">
                 
                 <div class="thumbnail-row-wrapper">
+                    <!-- Додано ID для динамічного оновлення мініатюр -->
                     <div class="thumbnail-row" id="thumbnailRow">
-                        <img class="thumbnail" src="./image/image 1 5.png" alt="Cake 1"
-                            onclick="selectImage('./image/image 1 5.png')">
-                        <img class="thumbnail" src="./image/image 1 4.png" alt="Cake 2"
-                            onclick="selectImage('./image/image 1 4.png')">
-                        <img class="thumbnail" src="./image/image 1 1.png" alt="Cake 3"
-                            onclick="selectImage('./image/image 1 1.png')">
-                        <img class="thumbnail" src="./image/image 1 2.png" alt="Cake 4"
-                            onclick="selectImage('./image/image 1 2.png')">
-                        <img class="thumbnail" src="./image/image 1 6.png" alt="Cake 5"
-                            onclick="selectImage('./image/image 1 6.png')">
+                        <!-- Динамічно заповнюється JS -->
                     </div>
                 </div>
             </div>
             <div class="product-descr">
 
-                <h1 class="section-title">Ягідна ніжність</h1>
-                <p class="product-text">
-                    Цей торт виглядає елегантно та мінімалістично. На верхівці може бути розташований будь-який напис чи нескладний малюнок. Торт круглий, охайно оформлений.
-                    <br><br>Всередині торт складається з:
-                    <br>Ванільного бісквіту — ніжного, легкого та ароматного.
-                    <br>Вершкового крему з маскарпоне — м'якого, повітряного та з насиченим молочним смаком.
-                    <br>Ягідного конфітюру — додає яскраву фруктову нотку, балансуючи солодкість крему.
-                    <br><br>Торт ідеально підходить для святкових подій, особливо днів народження, завдяки гармонійному поєднанню смаків і стильному дизайну.
+                <!-- Додано ID для динамічного оновлення -->
+                <h1 class="section-title" id="productName">Завантаження...</h1>
+                <!-- Додано ID для динамічного оновлення -->
+                <p class="product-text" id="productDescription">
+                    Завантаження опису...
                 </p>
-                <select class="product-weight-form">
-                    <option value="1">1 кг</option>
-                    <option value="1">1.5 кг</option>
-                    <option value="2">2 кг</option>
-                    <option value="3">3 кг</option>
-                    <option value="4">4 кг</option>
-                    <option value="5">5 кг</option>
+                <!-- Додано ID для динамічного оновлення -->
+                <select class="product-weight-form" id="productWeightSelect">
+                    <option value="">1 кг</option>
                 </select>
-                <span class="product-price">1450 грн</span>
-                    <!--
-                    <div class="product-quantity">
-                        <button type="button" id="button_minus">−</button>
-                        <span>1</span>
-                        <button type="button" id="button_plus">+</button>
-                    </div>  
-                    -->
-                <button class="product-add">У кошик</button>                
+
+                <!-- ДОДАНО: Поле для введення кількості -->
+                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                    <label for="productQuantityInput" class="product-text" style="margin-bottom: 0;">Кількість:</label>
+                    <input type="number" id="productQuantityInput" value="1" min="1" class="product-quantity-input" style="width: 80px; padding: 5px; border: 1px solid #ccc; border-radius: 5px;">
+                </div>
+                <!-- КІНЕЦЬ ДОДАНО -->
+
+                <!-- Додано ID для динамічного оновлення -->
+                <span class="product-price" id="productPrice">0 грн</span>
+                
+                <!-- Додано ID для обробки події -->
+                <button class="product-add" id="addToCartButton">У кошик</button>
             </div>
 
         </section>
         <!-- Доп инф -->
         <section class="product-additional-info">
             <h1 class="section-title">Додаткова інформація</h1>
-            <p class="product-text">
-                <b>Термін зберігання: </b>2 доби
-                <br><br><b>Умови зберігання: </b>(6±2) °С при відносній вологості повітря не більше 75%
-                <br><br><b>Склад: </b>Ванільний бісквіт, ягідний конфітюр (малиновий, полуничний або чорничний), вершковий крем
-                    на основі вершків і маскарпоне, харчові барвники, золоті їстівні елементи для декору, квіткові прикраси
-                    із мастики або ізомальту
-                <br><br><b>Алергени: </b>Яйця, пшениця (глютен), молочні продукти (вершковий сир, вершки, масло), барвники.
-                <br><br><b>Розмір: </b>20*20*40 см.
-                <br><br><b>Упаковка: </b>Брендована упаковка, стрічка, крафтовий пакет.
+            <!-- Додано ID для динамічного оновлення -->
+            <p class="product-text" id="additionalInfoText">
+                Завантаження додаткової інформації...
             </p>
         </section>
         <!-- Рекомендовані -->
         <section class="product-recommended">
             <h1 class="section-title">Рекомендовані</h1>
-            <div class="cards-container">
-                <a href="#" class="card-container">
-                    <img class="card-img" src="./image/image 7.png" alt="Продукт 1">
-                    <div class="card">
-                        <div class="card-text">
-                            <p class="card-name">Lorem ipsum</p>
-                            <p class="card-descr">Vivamus mi </p>
-                        </div>
-                        <div class="card-details">
-                            <p class="card-weight">1 кг</p>
-                            <p class="card-price">111 грн</p>
-                        </div>
-                    </div>
-                </a>
-                <a href="#" class="card-container">
-                    <img class="card-img" src="./image/image 6.png" alt="Продукт 1">
-                    <div class="card">
-                        <div class="card-text">
-                            <p class="card-name">Lorem ipsum</p>
-                            <p class="card-descr">Vivamus mi sem, imperdiet vitae metus dapibus, rhoncus sollicitudin tortor. Maecenas vestibulum laoreet sodales.</p>
-                        </div>
-                        <div class="card-details">
-                            <p class="card-weight">1 кг</p>
-                            <p class="card-price">111 грн</p>
-                        </div>
-                    </div>
-                </a>
-                <a href="#" class="card-container">
-                    <img class="card-img" src="./image/image 18.png" alt="Продукт 1">
-                    <div class="card">
-                        <div class="card-text">
-                            <p class="card-name">Lorem ipsum</p>
-                            <p class="card-descr">Vivamus mi sem, imperdiet vitae metus dapibus, rhoncus sollicitudin tortor. Maecenas vestibulum laoreet sodales.</p>
-                        </div>
-                        <div class="card-details">
-                            <p class="card-weight">1 кг</p>
-                            <p class="card-price">111 грн</p>
-                        </div>
-                    </div>
-                </a>
-                <a href="#" class="card-container">
-                    <img class="card-img" src="./image/image 17.png" alt="Продукт 1">
-                    <div class="card">
-                        <div class="card-text">
-                            <p class="card-name">Lorem ipsum</p>
-                            <p class="card-descr">Vivamus mi sem, imperdiet vitae metus dapibus, rhoncus sollicitudin tortor. Maecenas vestibulum laoreet sodales.</p>
-                        </div>
-                        <div class="card-details">
-                            <p class="card-weight">1 кг</p>
-                            <p class="card-price">111 грн</p>
-                        </div>
-                    </div>
-                </a>
+            <!-- Додано ID для динамічного оновлення -->
+            <div class="cards-container" id="recommendedProducts">
+                <!-- Динамічно заповнюється JS -->
             </div>
         </section>
         <!-- Відгуки -->
         <section class="product-reviews">
             <img src="./image/waves_3.png" width="100%" alt="волны">
             <h2 class="section-title">Відгуки</h2>
-            <div class="cards-container">
-                <div class="review-card">
-                    <p><strong>Покупець 1</strong></p>
-                    <p class="review-rating">★★★★★</p>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-                </div>
-                <div class="review-card">
-                    <p><strong>Покупець 2</strong></p>
-                    <p class="review-rating">★★★★★</p>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-                </div>
-                <div class="review-card">
-                    <p><strong>Покупець 3</strong></p>
-                    <p class="review-rating">★★★★★</p>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-                </div>
+            <!-- Додано ID для динамічного оновлення -->
+            <div class="cards-container" id="reviewsContainer">
+                <!-- Динамічно заповнюється JS -->
             </div>
         </section>
     </div>
 </main>
 <div id="footer"></div>
-</body>
+
 <script>
+    
+    // --- Допоміжні функції для динамічного завантаження ---
+
+    function getProductIdFromUrl() {
+        const urlParams = new URLSearchParams(window.location.search);
+        // Якщо ID немає в URL, повертаємо 1 для тесту (або null для реального продакшену)
+        return urlParams.get('id') || 1;
+    }
+
     function selectImage(imageSrc) {
         document.getElementById('selectedImage').src = imageSrc;
     }
 
+    function createThumbnail(imageSrc, altText) {
+        const img = document.createElement('img');
+        img.className = 'thumbnail'; 
+        img.src = imageSrc;
+        img.alt = altText;
+        img.onclick = () => selectImage(imageSrc);
+        img.onerror = function() { this.src = './image/placeholder.png'; };
+        document.getElementById('thumbnailRow').appendChild(img);
+    }
+    
+    function createRecommendedCard(product) {
+        const productUrl = `./product.html?id=${product.id}`; 
+        const imageSrc = product.main_image || "./image/placeholder.png";
+        
+        const cardHtml = `
+            <a href="${productUrl}" class="card-container">
+                <img class="card-img" src="${imageSrc}" 
+                    onerror="this.onerror=null;this.src='./image/placeholder.png';" 
+                    alt="${product.name}">
+                <div class="card">
+                    <div class="card-text">
+                        <p class="card-name">${product.name || 'Назва'}</p>
+                        <p class="card-descr">${product.description || 'Опис'}</p>
+                    </div>
+                    <div class="card-details">
+                        <p class="card-weight">${product.weight || 0} кг</p>
+                        <p class="card-price">${product.price || 0} грн</p>
+                    </div>
+                </div>
+            </a>
+        `;
+        const div = document.createElement('div');
+        div.innerHTML = cardHtml.trim();
+        document.getElementById('recommendedProducts').appendChild(div.firstChild);
+    }
+
+    // Допоміжна функція для відображення повідомлень (заміна alert)
+    function showMessage(text, isSuccess) {
+        const cartMessageDiv = document.getElementById('cartMessage');
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        
+        cartMessageDiv.textContent = text;
+        cartMessageDiv.style.color = isSuccess ? '#2e7d32' : '#d32f2f'; // Зелений або червоний
+        cartMessageDiv.style.borderColor = isSuccess ? '#a5d6a7' : '#ef9a9a';
+        cartMessageDiv.style.display = 'block';
+        loadingOverlay.style.display = 'flex'; // Показуємо оверлей з повідомленням
+
+        // Приховуємо повідомлення через 3 секунди
+        setTimeout(() => {
+            cartMessageDiv.style.display = 'none';
+            // Якщо немає помилки завантаження даних, ховаємо оверлей
+            if (document.getElementById('errorDisplay').style.display === 'none') {
+                 loadingOverlay.style.display = 'none';
+            }
+        }, 3000);
+    }
+
+
+    // --- ОСНОВНА ФУНКЦІЯ: Завантаження даних продукту з PHP API ---
+
+    async function fetchProductDetails(productId) {
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        const errorDisplay = document.getElementById('errorDisplay');
+        
+        if (!productId) {
+            // Якщо немає ID, можна не показувати помилку, а просто завантажити заглушку
+            // або показати критичну помилку
+            return;
+        }
+
+        // --- Налаштування шляху до API Продуктів ---
+        let apiPath = '../backend/api/products.php?action=getOne&id=' + productId;
+        if (!window.location.pathname.includes('/frontend/')) {
+             apiPath = 'backend/api/products.php?action=getOne&id=' + productId;
+        }
+
+        try {
+            const response = await fetch(apiPath);
+            
+            if (!response.ok) {
+                // Якщо 404 - значить файл API ще не створено, ігноруємо помилку, щоб не лякати юзера
+                if (response.status === 404) {
+                    console.warn("API products.php не знайдено. Використовуються демо-дані.");
+                    return; 
+                }
+                const errorText = await response.text(); 
+                throw new Error(`Помилка мережі: HTTP Status ${response.status}`);
+            }
+            
+            const data = await response.json();
+
+            if (data.success && data.product) {
+                const product = data.product;
+
+                // --- Заповнення сторінки ---
+                document.getElementById('productTitle').textContent = product.name || 'Продукт';
+                document.getElementById('productName').textContent = product.name || 'Назва продукту';
+                document.getElementById('productDescription').textContent = product.description || 'Детальний опис відсутній.';
+                document.getElementById('productPrice').textContent = `${product.price || 0} грн`;
+                
+                const mainImage = product.main_image || './image/image 1 5.png'; // Дефолтна картинка
+                document.getElementById('selectedImage').src = mainImage;
+
+                const thumbnailRow = document.getElementById('thumbnailRow');
+                thumbnailRow.innerHTML = ''; 
+                
+                // Додаємо головне фото
+                createThumbnail(mainImage, product.name); 
+                
+                if (product.images_array && Array.isArray(product.images_array)) {
+                    product.images_array.forEach(img => createThumbnail(img, product.name));
+                }
+                
+                // Вага
+                const weightSelect = document.getElementById('productWeightSelect');
+                weightSelect.innerHTML = `<option value="${product.weight || 1}">${product.weight || 1} кг</option>`;
+
+            } else {
+                console.warn(data.message || 'Продукт не знайдено в базі даних.');
+            }
+
+        } catch (error) {
+            console.error("Помилка завантаження даних продукту (можливо API ще не налаштовано):", error);
+            // Не блокуємо інтерфейс, залишаємо статичні дані
+        }
+    }
+
+    // --- НОВА ФУНКЦІЯ: Додавання товару в кошик ---
+    async function handleAddToCart() {
+        const productId = getProductIdFromUrl();
+        const quantityInput = document.getElementById('productQuantityInput');
+        
+        // Перевірка кількості
+        let quantity = parseInt(quantityInput.value);
+        if (isNaN(quantity) || quantity <= 0) {
+            showMessage('Будь ласка, вкажіть валідну кількість (більше 0).', false);
+            return;
+        }
+
+        // --- 1. Перевірка авторизації (НОВЕ) ---
+        const userDataStr = localStorage.getItem('user_data');
+        if (!userDataStr) {
+            showMessage('Будь ласка, увійдіть в акаунт, щоб додавати товари.', false);
+            setTimeout(() => { 
+                // Якщо є модальне вікно в index.html, краще перенаправити туди або відкрити його
+                // Тут просто перенаправляємо на головну, де є кнопка входу
+                window.location.href = 'index.html'; 
+            }, 2000);
+            return;
+        }
+        
+        const userEmail = JSON.parse(userDataStr).email;
+        
+        // Починаємо завантаження
+        document.getElementById('loadingOverlay').style.display = 'flex';
+        document.getElementById('errorDisplay').style.display = 'none';
+        document.getElementById('cartMessage').style.display = 'none';
+
+        // --- 2. Налаштування URL до API Кошика (НОВЕ) ---
+        let apiPath = '../backend/api/cart.php?action=add';
+        if (!window.location.pathname.includes('/frontend/')) {
+             apiPath = 'backend/api/cart.php?action=add';
+        }
+        
+        try {
+            // --- 3. Відправка JSON (НОВЕ) ---
+            const response = await fetch(apiPath, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    email: userEmail,
+                    productId: parseInt(productId), // Переконуємось, що це число
+                    quantity: quantity
+                })
+            });
+
+            // Перевірка на HTML помилку (якщо шлях неправильний)
+            const contentType = response.headers.get("content-type");
+            if (!contentType || !contentType.includes("application/json")) {
+                throw new Error("Сервер повернув не JSON. Перевірте шлях до API.");
+            }
+
+            const data = await response.json();
+
+            if (data.success) {
+                showMessage(`✅ Товар додано до кошика!`, true);
+            } else {
+                showMessage(`❌ Помилка: ${data.message || 'Невідома помилка.'}`, false);
+            }
+        } catch (error) {
+            showMessage('Помилка з\'єднання з сервером. Спробуйте пізніше.', false);
+            console.error('Помилка fetch:', error);
+        }
+    }
+
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const productId = getProductIdFromUrl();
+        // Спробуємо завантажити деталі, якщо API налаштовано
+        fetchProductDetails(productId);
+        
+        // --- Підключення обробника події до кнопки ---
+        const addToCartButton = document.getElementById('addToCartButton');
+        if (addToCartButton) {
+            addToCartButton.addEventListener('click', handleAddToCart);
+        }
+    });
+
 </script>
+</body>
 </html>

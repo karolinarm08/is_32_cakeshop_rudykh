@@ -1,27 +1,29 @@
 <!DOCTYPE html>
 <html lang="uk">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Schoolbell&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="icon" type="image/x-icon" href="./image/favicon.ico">
     <title>Особистий кабінет</title>
+    <style>
+        .message-box {
+            padding: 10px; margin-bottom: 15px; border-radius: 8px; font-size: 14px;
+            display: none; text-align: center; max-width: 600px; margin: 10px auto;
+        }
+        .message-error { background-color: #ffebee; color: #c62828; border: 1px solid #ffcdd2; }
+        .message-success { background-color: #e8f5e9; color: #2e7d32; border: 1px solid #c8e6c9; }
+    </style>
 </head>
 
 <body>
 <header>
     <nav id="nav" class="topnav">
         <div class="nav-logo"><a href="./index.html">RUBY</a></div>
-        <a href="javascript:void(0);" class="icon" onclick="myFunction()">
-            <i class="fa fa-bars"></i>
-        </a>
+        <a href="javascript:void(0);" class="icon" onclick="myFunction()"><i class="fa fa-bars"></i></a>
         <div class="nav-main">
             <div class="nav-first">
                 <a href="./menu.html">Меню</a>
@@ -46,9 +48,12 @@
     </div>
     <div class="main">
         <h2 class="title">Особистий кабінет</h2>
+        
+        <div id="globalMessage" class="message-box"></div>
+
         <div class="introduction">
-            <p>Вітаємо, Karolina Rm</p>
-            <button class="confirm-button">ВИЙТИ</button>
+            <p id="welcomeText">Вітаємо, ...</p>
+            <button id="logoutBtn" class="confirm-button">ВИЙТИ</button>
         </div>
         <div class="container">
             <div class="sidebar">
@@ -56,357 +61,88 @@
                 <button onclick="showSection('delivery-addresses', this)">Адреси доставки</button>
                 <button onclick="showSection('order-history', this)">Історія замовлень</button>
                 <button onclick="showSection('change-password', this)">Змінити пароль</button>
-                <!--
-                    <button onclick="showSection('section5', this)">5</button>
-                    <button onclick="showSection('section6', this)">6</button>
-                    <button onclick="showSection('section7', this)">7</button>
-                    -->
             </div>
 
             <div class="content">
+                <!-- ПЕРСОНАЛЬНІ ДАНІ -->
                 <div id="personal-inf" class="hidden">
                     <h3>Персональні дані</h3>
-                    <form action='' class="personal-inf">
+                    <form id="profileForm" class="personal-inf">
                         <div>
                             <label for="lname">Прізвище</label><br>
-                            <input type="text" id="lname" name="lname" maxlength="20" value="" placeholder="" class="account-input" required><br>
+                            <input type="text" id="lname" name="lname" class="account-input"><br>
                         </div>
                         <div>
                             <label for="fname">Ім’я</label><br>
-                            <input type="text" id="fname" name="fname" maxlength="20" value="" placeholder="" class="account-input" required><br>
+                            <input type="text" id="fname" name="fname" class="account-input" required><br>
                         </div>
                         <div>
                             <label for="phnumber">Контактний телефон</label><br>
-                            <input type="tel" id="phnumber" name="phnumber" maxlength="13" value="" placeholder="" class="account-input" required><br>
+                            <input type="tel" id="phnumber" name="phnumber" class="account-input"><br>
                         </div>
                         <div>
                             <label for="email">Електронна пошта</label><br>
-                            <input type="text" id="email" name="email" maxlength="40" value="" placeholder="ruby@gmail.com" class="account-input" required><br>
-                        </div>
-                        <div>
-                            <label for="birthday">Дата народження</label><br>
-                            <input type="date" id="birthday" name="birthday" value="" class="account-input"><br>
-                        </div>
-                        <div>
-                            <label for="gender">Стать</label><br>
-                            <input type="" id="gender" name="gender" maxlength="1" value="" placeholder="ж/ч" class="account-input"><br>
+                            <input type="text" id="email" name="email" class="account-input" readonly><br>
                         </div>
                         <input type="submit" value="ЗБЕРЕГТИ ДАНІ" class="confirm-button">
                     </form>
                 </div>
+                
+                <!-- АДРЕСИ ДОСТАВКИ -->
                 <div id="delivery-addresses" class="hidden">
                     <h3>Адреси доставки</h3>
-                    <form action='' class="delivery-addresses">
+                    <form id="addressForm" class="delivery-addresses">
                         <div class="city">
                             <label for="city">Місто</label><br>
-                            <input type="text" id="city" name="city" maxlength="10" value="" class="account-input" required><br>
+                            <input type="text" id="city" name="city" class="account-input" required><br>
                         </div>
                         <div class="street">
                             <label for="street">Вулиця</label><br>
-                            <input type="text" id="street" name="street" maxlength="10" value="" class="account-input" required><br>
+                            <input type="text" id="street" name="street" class="account-input" required><br>
                         </div>
                         <div class="house">
                             <label for="house">Будинок</label><br>
-                            <input type="text" id="house" name="house" maxlength="10" value="" class="account-input" required><br>
+                            <input type="text" id="house" name="house" class="account-input" required><br>
                         </div>
                         <div class="apart">
                             <label for="apart">Квартира</label><br>
-                            <input type="text" id="apart" name="apart" maxlength="10" value="" class="account-input"><br>
+                            <input type="text" id="apart" name="apart" class="account-input"><br>
                         </div>
                         <div class="floor">
                             <label for="floor">Поверх</label><br>
-                            <input type="text" id="floor" name="floor" maxlength="10" value="" class="account-input"><br>
+                            <input type="text" id="floor" name="floor" class="account-input"><br>
                         </div>
                         <input type="submit" value="ЗБЕРЕГТИ АДРЕСУ" class="confirm-button">
                     </form>
-
-                    <h3>Збережені адреси</h3>
-                    <ul class="saved-addrs">
-                        <li class="saved-addr">
-                            <div>
-                                <p>Київ, вулиця Володимирська, будинок 45, квартира 12, поверх 5.</p>
-                                <div>
-                                    <button type="button" class="saved-addr-edit-button">*edit</button>
-                                    <button type="button" class="saved-addr-delete-button">*delete</button>
-                                </div>
-                            </div>
-                        </li>
-                        <li class="saved-addr">
-                            <div>
-                                <p>Львів, вулиця Шевченка, будинок 18, квартира 25, поверх 7.</p>
-                                <div>
-                                    <button type="button" class="saved-addr-edit-button">*edit</button>
-                                    <button type="button" class="saved-addr-delete-button">*delete</button>
-                                </div>
-                            </div>
-                        </li>
-                        <li class="saved-addr">
-                            <div>
-                                <p>Одеса, вулиця Дерибасівська, будинок 16, квартира 24, поверх 3.</p>
-                                <div>
-                                    <button type="button" class="saved-addr-edit-button">*edit</button>
-                                    <button type="button" class="saved-addr-delete-button">*delete</button>
-                                </div>
-                            </div>
-                        </li>
-                    </ul>
                 </div>
+                
                 <div id="order-history" class="hidden">
                     <h3>Історія замовлень</h3>
-                    <div class="archive">
-                        <div class="archive-item">
-                            <button class="archive-toggle">
-                                <span>31.01.24</span>
-                                <img src="./image/Chevron down.png" alt="Chevron">
-                            </button>
-                            <div class="archive-content">
-                                <p>Київ, вулиця Володимирська, будинок 45, квартира 12, поверх 5.</p>
-                                <div class="archive-cards">
-                                    <div class="card-container archive-card">
-                                        <div class="shop-cart-img">
-                                            <a href="./product.html"><img class="card-img" src="./image/image 1.png"
-                                                    alt="Продукт 1"></a>
-                                        </div>
-                                        <div class="card">
-                                            <a href="./product.html" class="card-text">
-                                                <p class="card-name">Lorem ipsum</p>
-                                                <p class="card-descr">Vivamus mi sem, imperdiet vitae metus dapibus.
-                                                </p>
-                                            </a>
-                                            <div class="card-details">
-                                                <div>
-                                                    <p class="weight">1 кг</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="card-container archive-card">
-                                        <div class="shop-cart-img">
-                                            <a href="./product.html"><img class="card-img" src="./image/image 8.png"
-                                                    alt="Продукт 1"></a>
-                                        </div>
-                                        <div class="card">
-                                            <a href="./product.html" class="card-text">
-                                                <p class="card-name">Lorem ipsum</p>
-                                                <p class="card-descr">Vivamus mi sem, imperdiet vitae metus dapibus.
-                                                </p>
-                                            </a>
-                                            <div class="card-details">
-                                                <div>
-                                                    <p class="weight">1 кг</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="card-container archive-card">
-                                        <div class="shop-cart-img">
-                                            <a href="./product.html"><img class="card-img" src="./image/image 5.png"
-                                                    alt="Продукт 1"></a>
-                                        </div>
-                                        <div class="card">
-                                            <a href="./product.html" class="card-text">
-                                                <p class="card-name">Lorem ipsum</p>
-                                                <p class="card-descr">Vivamus mi sem, imperdiet vitae metus dapibus,
-                                                    rhoncus sollicitudin tortor.</p>
-                                            </a>
-                                            <div class="card-details">
-                                                <div>
-                                                    <p class="weight">1 кг</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="card-container archive-card">
-                                        <div class="shop-cart-img">
-                                            <a href="./product.html"><img class="card-img" src="./image/image 6.png"
-                                                    alt="Продукт 1"></a>
-                                        </div>
-                                        <div class="card">
-                                            <a href="./product.html" class="card-text">
-                                                <p class="card-name">Lorem ipsum</p>
-                                                <p class="card-descr">Vivamus mi sem, imperdiet vitae metus dapibus,
-                                                    rhoncus sollicitudin tortor.</p>
-                                            </a>
-                                            <div class="card-details">
-                                                <div>
-                                                    <p class="weight">1 кг</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="card-container archive-card">
-                                        <div class="shop-cart-img">
-                                            <a href="./product.html"><img class="card-img" src="./image/image 7.png"
-                                                    alt="Продукт 1"></a>
-                                        </div>
-                                        <div class="card">
-                                            <a href="./product.html" class="card-text">
-                                                <p class="card-name">Lorem ipsum</p>
-                                                <p class="card-descr">Vivamus mi sem, imperdiet vitae metus dapibus,
-                                                    rhoncus sollicitudin tortor.</p>
-                                            </a>
-                                            <div class="card-details">
-                                                <div>
-                                                    <p class="weight">1 кг</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="archive-item">
-                            <button class="archive-toggle">
-                                <span>24.05.24</span>
-                                <img src="./image/Chevron down.png" alt="Chevron">
-                            </button>
-                            <div class="archive-content">
-                                <p>Київ, вулиця Володимирська, будинок 45, квартира 12, поверх 5.</p>
-                                <div class="archive-cards">
-                                    <div class="card-container archive-card">
-                                        <div class="shop-cart-img">
-                                            <a href="./product.html"><img class="card-img" src="./image/image 8.png"
-                                                    alt="Продукт 1"></a>
-                                        </div>
-                                        <div class="card">
-                                            <a href="./product.html" class="card-text">
-                                                <p class="card-name">Lorem ipsum</p>
-                                                <p class="card-descr">Vivamus mi sem, imperdiet vitae metus dapibus,
-                                                    rhoncus sollicitudin tortor.</p>
-                                            </a>
-                                            <div class="card-details">
-                                                <div>
-                                                    <p class="weight">1 кг</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="card-container archive-card">
-                                        <div class="shop-cart-img">
-                                            <a href="./product.html"><img class="card-img" src="./image/image 14.png"
-                                                    alt="Продукт 1"></a>
-                                        </div>
-                                        <div class="card">
-                                            <a href="./product.html" class="card-text">
-                                                <p class="card-name">Lorem ipsum</p>
-                                                <p class="card-descr">Vivamus mi sem, imperdiet vitae metus dapibus,
-                                                    rhoncus sollicitudin tortor.</p>
-                                            </a>
-                                            <div class="card-details">
-                                                <div>
-                                                    <p class="weight">1 кг</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="archive-item">
-                            <button class="archive-toggle">
-                                <span>02.04.24</span>
-                                <img src="./image/Chevron down.png" alt="Chevron">
-                            </button>
-                            <div class="archive-content">
-                                <p>Київ, вулиця Володимирська, будинок 45, квартира 12, поверх 5.</p>
-                                <div class="archive-cards">
-                                    <div class="card-container archive-card">
-                                        <div class="shop-cart-img">
-                                            <a href="./product.html"><img class="card-img" src="./image/image 5.png"
-                                                    alt="Продукт 1"></a>
-                                        </div>
-                                        <div class="card">
-                                            <a href="./product.html" class="card-text">
-                                                <p class="card-name">Lorem ipsum</p>
-                                                <p class="card-descr">Vivamus mi sem, imperdiet vitae metus dapibus,
-                                                    rhoncus sollicitudin tortor.</p>
-                                            </a>
-                                            <div class="card-details">
-                                                <div>
-                                                    <p class="weight">1 кг</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="card-container archive-card">
-                                        <div class="shop-cart-img">
-                                            <a href="./product.html"><img class="card-img" src="./image/image 6.png"
-                                                    alt="Продукт 1"></a>
-                                        </div>
-                                        <div class="card">
-                                            <a href="./product.html" class="card-text">
-                                                <p class="card-name">Lorem ipsum</p>
-                                                <p class="card-descr">Vivamus mi sem, imperdiet vitae metus dapibus,
-                                                    rhoncus sollicitudin tortor.</p>
-                                            </a>
-                                            <div class="card-details">
-                                                <div>
-                                                    <p class="weight">1 кг</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="card-container archive-card">
-                                        <div class="shop-cart-img">
-                                            <a href="./product.html"><img class="card-img" src="./image/image 7.png"
-                                                    alt="Продукт 1"></a>
-                                        </div>
-                                        <div class="card">
-                                            <a href="./product.html" class="card-text">
-                                                <p class="card-name">Lorem ipsum</p>
-                                                <p class="card-descr">Vivamus mi sem, imperdiet vitae metus dapibus,
-                                                    rhoncus sollicitudin tortor.</p>
-                                            </a>
-                                            <div class="card-details">
-                                                <div>
-                                                    <p class="weight">1 кг</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <p>Тут буде історія...</p>
                 </div>
+                
                 <div id="change-password" class="hidden">
                     <h3>Змінити пароль</h3>
-                    <form action='' class="change-password">
-                        <div class="oldpass">
-                            <label for="oldpass">Старий пароль</label><br>
-                            <input type="password" id="oldpass" name="oldpass" minlength="8" maxlength="30" value="" class="account-input" required><br>
-                        </div>
-                        <div class="newpass">
-                            <label for="newpass">Новий пароль</label><br>
-                            <input type="password" id="newpass" name="newpass" minlength="8" maxlength="30" value="" class="account-input" required><br>
-                        </div>
-                        <div class="confirmpass">
-                            <label for="confirmpass">Підтвердити пароль</label><br>
-                            <input type="password" id="confirmpass" name="confirmpass" minlength="8" maxlength="30" value="" class="account-input" required><br>
-                        </div>
-                        <input type="submit" value="ЗМІНИТИ ПАРОЛЬ" class="confirm-button">
-                    </form>
+                    <p>Функціонал у розробці</p>
                 </div>
             </div>
         </div>
     </div>
 </main>
 <div id="footer"></div>
+
 <script>
+    // --- API URL ---
+    let API_URL = '/backend/api/auth.php'; 
+    if (window.location.pathname.includes('/frontend/')) { API_URL = '../backend/api/auth.php'; }
+
     let currentSection = null;
     let currentButton = null;
 
     function showSection(sectionId, button) {
-        // Скрываем текущую секцию, если она есть
-        if (currentSection) {
-            document.getElementById(currentSection).classList.add('hidden');
-        }
-        // Убираем класс active с текущей кнопки, если она есть
-        if (currentButton) {
-            currentButton.classList.remove('active');
-        }
-
-        // Показываем новую секцию и добавляем класс active к новой кнопке
+        if (currentSection) document.getElementById(currentSection).classList.add('hidden');
+        if (currentButton) currentButton.classList.remove('active');
+        
         currentSection = sectionId;
         if (button) {
             currentButton = button;
@@ -415,28 +151,115 @@
         document.getElementById(sectionId).classList.remove('hidden');
     }
 
-    // Устанавливаем начальную секцию при загрузке страницы
+    function showMessage(text, type) {
+        const box = document.getElementById('globalMessage');
+        box.textContent = text;
+        box.className = 'message-box ' + (type === 'success' ? 'message-success' : 'message-error');
+        box.style.display = 'block';
+        setTimeout(() => { box.style.display = 'none'; }, 3000);
+    }
+
+    // --- ОСНОВНА ЛОГІКА ЗАВАНТАЖЕННЯ ---
     document.addEventListener('DOMContentLoaded', () => {
-        const firstButton = document.querySelector('.sidebar button:first-child'); // Первая кнопка
-        showSection('personal-inf', firstButton); // Передаем ID секции и первую кнопку
+        // 1. Перевірка чи є вхід
+        const isLoggedIn = localStorage.getItem('user_logged_in') === 'true';
+        if (!isLoggedIn) {
+            window.location.href = 'index.html';
+            return;
+        }
+
+        // 2. Беремо email з localStorage (збережений при вході)
+        let savedData = localStorage.getItem('user_data');
+        let userEmail = '';
+        if (savedData) {
+            userEmail = JSON.parse(savedData).email;
+        }
+
+        // 3. Запит до сервера за СВІЖИМИ даними
+        if (userEmail) {
+            fetch(API_URL + '?action=getProfile', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: userEmail })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success && data.user) {
+                    const u = data.user;
+                    // Оновлюємо інтерфейс
+                    document.getElementById('welcomeText').textContent = `Вітаємо, ${u.name}`;
+                    
+                    // Заповнюємо форму профілю
+                    document.getElementById('email').value = u.email || '';
+                    document.getElementById('fname').value = u.name || '';
+                    document.getElementById('lname').value = u.lastName || '';
+                    document.getElementById('phnumber').value = u.phone || '';
+
+                    // Заповнюємо форму адреси (якщо є)
+                    if (u.address) {
+                        document.getElementById('city').value = u.address.city || '';
+                        document.getElementById('street').value = u.address.street || '';
+                        document.getElementById('house').value = u.address.house || '';
+                        document.getElementById('apart').value = u.address.apartment || '';
+                        document.getElementById('floor').value = u.address.floor || '';
+                    }
+                }
+            })
+            .catch(err => console.error("Не вдалося завантажити профіль", err));
+        }
+
+        const firstButton = document.querySelector('.sidebar button:first-child');
+        showSection('personal-inf', firstButton);
     });
 
-    document.querySelectorAll(".archive-toggle").forEach(button => {
-        button.addEventListener("click", function () {
-            const content = this.nextElementSibling;
-            const img = this.querySelector("img");
-
-            // Переключение отображения контента
-            if (content.style.display === "block") {
-                content.style.display = "none";
-                img.setAttribute("src", "./image/Chevron down.png");
-            } else {
-                content.style.display = "block";
-                img.setAttribute("src", "./image/Chevron up.png");
-            }
-        });
+    // --- ЛОГІКА ВИХОДУ ---
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+        localStorage.removeItem('user_logged_in');
+        localStorage.removeItem('user_data');
+        window.location.href = 'index.html';
     });
 
+    // --- ЗБЕРЕЖЕННЯ ПРОФІЛЮ ---
+    document.getElementById('profileForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const data = {
+            email: document.getElementById('email').value,
+            firstName: document.getElementById('fname').value,
+            lastName: document.getElementById('lname').value,
+            phone: document.getElementById('phnumber').value
+        };
+
+        fetch(API_URL + '?action=update', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(data)
+        })
+        .then(res => res.json())
+        .then(d => showMessage(d.message, d.success ? 'success' : 'error'))
+        .catch(() => showMessage('Помилка сервера', 'error'));
+    });
+
+    // --- ЗБЕРЕЖЕННЯ АДРЕСИ ---
+    document.getElementById('addressForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const data = {
+            email: document.getElementById('email').value, // Ідентифікатор
+            city: document.getElementById('city').value,
+            street: document.getElementById('street').value,
+            house: document.getElementById('house').value,
+            apartment: document.getElementById('apart').value,
+            floor: document.getElementById('floor').value
+        };
+
+        fetch(API_URL + '?action=saveAddress', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(data)
+        })
+        .then(res => res.json())
+        .then(d => showMessage(d.message, d.success ? 'success' : 'error'))
+        .catch(() => showMessage('Помилка сервера', 'error'));
+    });
 
 </script>
 </body>

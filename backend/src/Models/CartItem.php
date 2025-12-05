@@ -11,13 +11,16 @@ class CartItem
     public int $cartId;
     public int $productId;
 
-    public function __construct(int $cartId, int $productId, int $qty, float $unitPrice)
+    // Оновлений конструктор для коректної роботи з БД
+    public function __construct(int $cartId, int $productId, int $qty, float $unitPrice, ?int $id = null)
     {
         $this->cartId = $cartId;
         $this->productId = $productId;
         $this->qty = $qty;
         $this->unitPrice = $unitPrice;
-        $this->id = rand(1, 10000);
+        // Встановлюємо ID, якщо він переданий (при завантаженні з БД)
+        if ($id !== null) {
+            $this->id = $id;
+        }
     }
 }
-

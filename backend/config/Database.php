@@ -7,29 +7,26 @@ use PDOException;
 
 class Database
 {
-    private $host = 'sql100.infinityfree.com';
-    private $db_name = 'if0_40472805_cakeshop';
-    private $username = 'if0_40472805'; // Ваше ім'я користувача БД
-    private $password = 'dcmRXnx3yUO78';     // Ваш пароль БД
-    private $charset = 'utf8mb4'; // Рекомендоване кодування
-    public $conn;
+    // 👇 ВАЖЛИВО: Впишіть сюди дані з вашого хостингу InfinityFree
+    private string $host = 'sql100.infinityfree.com'; // Знайдіть "MySQL Hostname" у панелі
+    private string $db_name = 'if0_40472805_cakeshop'; // Ваша назва БД (зі скріншоту)
+    private string $username = 'if0_40472805';        // Ваш "MySQL Username"
+    private string $password = 'dcmRXnx3yUO78'; // Ваш пароль від хостингу (vPanel password)
+    
+    public ?PDO $conn = null;
 
     public function getConnection(): ?PDO
     {
         $this->conn = null;
 
-        $dsn = "mysql:host=" . $this->host . ";dbname=" . $this->db_name . ";charset=" . $this->charset;
-        
-        $options = [
-            PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
-            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-            PDO::ATTR_EMULATE_PREPARES   => false,
-        ];
-
         try {
-            $this->conn = new PDO($dsn, $this->username, $this->password, $options);
+            $this->conn = new PDO("mysql:host=" . $this->host . ";dbname=" . $this->db_name, $this->username, $this->password);
+            $this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            $this->conn->exec("set names utf8");
         } catch (PDOException $exception) {
-            echo "Помилка підключення: " . $exception->getMessage();
+            // Ми НЕ робимо echo тут, щоб не ламати JSON
+            // Ми викидаємо помилку далі, щоб auth.php її зловив
+            throw new PDOException("Помилка підключення до БД: " . $exception->getMessage());
         }
 
         return $this->conn;

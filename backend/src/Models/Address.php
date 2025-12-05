@@ -5,21 +5,20 @@ namespace App\Models;
 class Address
 {
     public int $id;
-    public string $line1;
+    public int $userId;
     public string $city;
-    public int $zip;
-    public bool $isDefault;
+    public string $street;
+    public string $house;
+    public ?string $apartment;
+    public ?string $floor;
 
-    public int $userId; 
-
-    public function __construct(int $userId, string $line1, string $city, int $zip, bool $isDefault = false)
+    public function __construct(int $userId, string $city, string $street, string $house, ?string $apartment = null, ?string $floor = null)
     {
         $this->userId = $userId;
-        $this->line1 = $line1;
         $this->city = $city;
-        $this->zip = $zip;
-        $this->isDefault = $isDefault;
-        $this->id = rand(1, 10000);
+        $this->street = $street;
+        $this->house = $house;
+        $this->apartment = $apartment;
+        $this->floor = $floor;
     }
 }
-

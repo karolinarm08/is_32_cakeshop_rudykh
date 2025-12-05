@@ -8,7 +8,7 @@ use PDO;
 
 class UserRepository
 {
-    private $conn;
+    private PDO $conn;
 
     public function __construct()
     {
@@ -16,51 +16,60 @@ class UserRepository
         $this->conn = $database->getConnection();
     }
 
-    // Пошук користувача за Email
-    public function findByEmail(string $email)
+    public function findByEmail(string $email): ?User
     {
         $query = "SELECT * FROM users WHERE email = :email LIMIT 1";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(':email', $email);
         $stmt->execute();
 
-        $data = $stmt->fetch(PDO::FETCH_ASSOC);
-        
-        if ($data) {
-            // Повертаємо об'єкт User або масив даних
-            return new User($data['email'], $data['password_hash'], $data['id'], $data['role']);
+        if ($stmt->rowCount() > 0) {
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+            $user = new User($row['email'], $row['password_hash'], $row['first_name'], $row['role']);
+            $user->id = $row['id'];
+            // Додаємо інші поля, якщо вони є в БД
+            $user->lastName = $row['last_name'] ?? null;
+            $user->phone = $row['phone'] ?? null;
+            return $user;
         }
-
         return null;
     }
 
-    // Збереження нового користувача
     public function save(User $user): bool
     {
-        $query = "INSERT INTO users (email, password_hash, role, first_name, last_name, phone) 
-                  VALUES (:email, :password, :role, :first_name, :last_name, :phone)";
+        $query = "INSERT INTO users (email, password_hash, first_name, role) VALUES (:email, :password_hash, :first_name, :role)";
+        $stmt = $this->conn->prepare($query);
+
+        $email = htmlspecialchars(strip_tags($user->email));
+        $firstName = htmlspecialchars(strip_tags($user->firstName));
+        
+        $stmt->bindParam(':email', $email);
+        $stmt->bindParam(':password_hash', $user->passwordHash);
+        $stmt->bindParam(':first_name', $firstName);
+        $stmt->bindParam(':role', $user->role);
+
+        return $stmt->execute();
+    }
+
+    // НОВИЙ МЕТОД: Оновлення даних
+    public function update(User $user): bool
+    {
+        // Переконайтеся, що у вашій БД є колонки last_name та phone
+        // Якщо їх немає, видаліть відповідні рядки з цього запиту
+        $query = "UPDATE users SET first_name = :first_name, last_name = :last_name, phone = :phone WHERE email = :email";
         
         $stmt = $this->conn->prepare($query);
 
-        // Прив'язка даних
-        $stmt->bindParam(':email', $user->email);
-        $stmt->bindParam(':password', $user->passwordHash);
-        $role = 'user'; // Значення за замовчуванням
-        $stmt->bindParam(':role', $role);
-        // Додаткові поля можна додати в модель User, поки лишимо null або пусті
-        $empty = '';
-        $stmt->bindParam(':first_name', $empty);
-        $stmt->bindParam(':last_name', $empty);
-        $stmt->bindParam(':phone', $empty);
+        $fname = htmlspecialchars(strip_tags($user->firstName));
+        $lname = htmlspecialchars(strip_tags($user->lastName ?? ''));
+        $phone = htmlspecialchars(strip_tags($user->phone ?? ''));
+        $email = htmlspecialchars(strip_tags($user->email));
 
-        if ($stmt->execute()) {
-            return true;
-        }
-        return false;
-    }
-    
-    // Отримання ID останнього створеного запису
-    public function getLastId() {
-        return $this->conn->lastInsertId();
+        $stmt->bindParam(':first_name', $fname);
+        $stmt->bindParam(':last_name', $lname);
+        $stmt->bindParam(':phone', $phone);
+        $stmt->bindParam(':email', $email);
+
+        return $stmt->execute();
     }
 }

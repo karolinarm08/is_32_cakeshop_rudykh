@@ -28,7 +28,7 @@ require_once __DIR__ . '/src/Models/CartItem.php';
 require_once __DIR__ . '/src/Repositories/UserRepository.php';
 require_once __DIR__ . '/src/Repositories/ProductRepository.php';
 require_once __DIR__ . '/src/Repositories/OrderRepository.php';
-
+require_once __DIR__ . '/src/Repositories/ImageRepository.php';
 // Services
 require_once __DIR__ . '/src/Services/AuthService.php';
 require_once __DIR__ . '/src/Services/PaymentService.php';

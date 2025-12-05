@@ -3,8 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Schoolbell&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">    
@@ -16,9 +14,7 @@
 <header>
     <nav id="nav" class="topnav">
         <div class="nav-logo"><a href="./index.html">RUBY</a></div>
-        <a href="javascript:void(0);" class="icon" onclick="myFunction()">
-            <i class="fa fa-bars"></i>
-        </a>
+        <a href="javascript:void(0);" class="icon" onclick="myFunction()"><i class="fa fa-bars"></i></a>
         <div class="nav-main">
             <div class="nav-first">
                 <a href="./menu.html">Меню</a>
@@ -43,177 +39,127 @@
     </div>
     <div class="main">
         <h2 class="title">Кошик</h2>
+        
+        <div id="cartMessage" style="text-align: center; display: none; padding: 20px;"></div>
+
         <div class="shop-cart filters">
-            <p class="shop-cart-summ">Сума до сплати: 1111 грн</p>
+            <p class="shop-cart-summ" id="totalPrice">Сума до сплати: 0 грн</p>
             <div class="shop-cart-but">
-                <button class="select-all">Обрати усі</button>
                 <button class="filter-button" onclick="goToOrder()">Замовити обрані</button>
-                <script src="code.js"></script>       
             </div>
         </div>
-        <div class="menu-cards-container">
-            <div class="card-container">
-                <div class="shop-cart-img">
-                    <a href="./product.html"><img class="card-img" src="./image/image 1.png" alt="Продукт 1"></a>
-                    <label class="checkbox-container">
-                        <input type="checkbox">
-                        <span class="checkmark"></span>
-                    </label>                
-                </div>
-                <div class="card">
-                    <a href="./product.html" class="card-text">
-                        <p class="card-name">Lorem ipsum</p>
-                        <p class="card-descr">Vivamus mi sem, imperdiet vitae metus dapibus.</p>
-                    </a>
-                    <div class="card-details">
-                        <div >
-                            <p class="weight">1 кг</p>
-                            <p class="card-price">111 грн</p>
-                        </div>
-                        <div class="card-quantity">
-                            <button type="button" id="button_minus">−</button>
-                            <span>1</span>
-                            <button type="button" id="button_plus">+</button>
-                        </div>  
-                    </div>
-                </div>
-            </div>
-            <div class="card-container">
-                <div class="shop-cart-img">
-                    <a href="./product.html"><img class="card-img" src="./image/image 5.png" alt="Продукт 1"></a>
-                    <label class="checkbox-container">
-                        <input type="checkbox">
-                        <span class="checkmark"></span>
-                    </label>         
-                </div>
-                <div class="card">
-                    <a href="./product.html" class="card-text">
-                        <p class="card-name">Lorem ipsum</p>
-                        <p class="card-descr">Vivamus mi sem, imperdiet vitae metus dapibus, rhoncus sollicitudin tortor.</p>
-                    </a>
-                    <div class="card-details">
-                        <div >
-                            <p class="weight">1 кг</p>
-                            <p class="card-price">111 грн</p>
-                        </div>
-                        <div class="card-quantity">
-                            <button type="button" id="button_minus">−</button>
-                            <span>1</span>
-                            <button type="button" id="button_plus">+</button>
-                        </div>  
-                    </div>
-                </div>
-            </div>
-            <div class="card-container">
-                <div class="shop-cart-img">
-                    <a href="./product.html"><img class="card-img" src="./image/image 6.png" alt="Продукт 1"></a>
-                    <label class="checkbox-container">
-                        <input type="checkbox">
-                        <span class="checkmark"></span>
-                    </label>                         
-                </div>
-                <div class="card">
-                    <a href="./product.html" class="card-text">
-                        <p class="card-name">Lorem ipsum</p>
-                        <p class="card-descr">Vivamus mi sem, imperdiet vitae metus dapibus, rhoncus sollicitudin tortor.</p>
-                    </a>
-                    <div class="card-details">
-                        <div >
-                            <p class="weight">1 кг</p>
-                            <p class="card-price">111 грн</p>
-                        </div>
-                        <div class="card-quantity">
-                            <button type="button" id="button_minus">−</button>
-                            <span>1</span>
-                            <button type="button" id="button_plus">+</button>
-                        </div>  
-                    </div>
-                </div>
-            </div>
-            <div class="card-container">
-                <div class="shop-cart-img">
-                    <a href="./product.html"><img class="card-img" src="./image/image 7.png" alt="Продукт 1"></a>
-                    <label class="checkbox-container">
-                        <input type="checkbox">
-                        <span class="checkmark"></span>
-                    </label>                         
-                </div>
-                <div class="card">
-                    <a href="./product.html" class="card-text">
-                        <p class="card-name">Lorem ipsum</p>
-                        <p class="card-descr">Vivamus mi sem, imperdiet vitae metus dapibus, rhoncus sollicitudin tortor.</p>
-                    </a>
-                    <div class="card-details">
-                        <div >
-                            <p class="weight">1 кг</p>
-                            <p class="card-price">111 грн</p>
-                        </div>
-                        <div class="card-quantity">
-                            <button type="button" id="button_minus">−</button>
-                            <span>1</span>
-                            <button type="button" id="button_plus">+</button>
-                        </div>  
-                    </div>
-                </div>
-            </div>
-            <div class="card-container">
-                <div class="shop-cart-img">
-                    <a href="./product.html"><img class="card-img" src="./image/image 9.png" alt="Продукт 1"></a>
-                    <label class="checkbox-container">
-                        <input type="checkbox">
-                        <span class="checkmark"></span>
-                    </label>                         
-                </div>
-                <div class="card">
-                    <a href="./product.html" class="card-text">
-                        <p class="card-name">Lorem ipsum</p>
-                        <p class="card-descr">Vivamus mi sem, imperdiet vitae metus dapibus, rhoncus sollicitudin tortor.</p>
-                    </a>
-                    <div class="card-details">
-                        <div >
-                            <p class="weight">1 кг</p>
-                            <p class="card-price">111 грн</p>
-                        </div>
-                        <div class="card-quantity">
-                            <button type="button" id="button_minus">−</button>
-                            <span>1</span>
-                            <button type="button" id="button_plus">+</button>
-                        </div>  
-                    </div>
-                </div>
-            </div>
-            <div class="card-container">
-                <div class="shop-cart-img">
-                    <a href="./product.html"><img class="card-img" src="./image/image 8.png" alt="Продукт 1"></a>
-                    <label class="checkbox-container">
-                        <input type="checkbox">
-                        <span class="checkmark"></span>
-                    </label>         
-                </div>
-                <div class="card">
-                    <a href="./product.html" class="card-text">
-                        <p class="card-name">Lorem ipsum</p>
-                        <p class="card-descr">Vivamus mi sem, imperdiet vitae metus dapibus, rhoncus sollicitudin tortor.</p>
-                    </a>
-                    <div class="card-details">
-                        <div >
-                            <p class="weight">1 кг</p>
-                            <p class="card-price">111 грн</p>
-                        </div>
-                        <div class="card-quantity">
-                            <button type="button" id="button_minus">−</button>
-                            <span>1</span>
-                            <button type="button" id="button_plus">+</button>
-                        </div>  
-                    </div>
-                </div>
-            </div>
+        
+        <!-- Контейнер для карток товарів (сюди буде рендерити JS) -->
+        <div class="menu-cards-container" id="cartContainer">
+            <!-- Тут з'являться товари -->
+            <p style="width: 100%; text-align: center;">Завантаження...</p>
         </div>
+
         <div class="cont">
             <button class="cont-button"><img src="./image/Line 1.png"></button>
         </div>
     </div>
 </main>
 <div id="footer"></div>
+
+<script>
+    // --- API CONFIG ---
+    let API_CART_URL = '/backend/api/cart.php'; 
+    if (window.location.pathname.includes('/frontend/')) { API_CART_URL = '../backend/api/cart.php'; }
+
+    // --- Load Cart ---
+    document.addEventListener('DOMContentLoaded', () => {
+        loadCart();
+    });
+
+    function loadCart() {
+        const userDataStr = localStorage.getItem('user_data');
+        if (!userDataStr) {
+            document.getElementById('cartContainer').innerHTML = '<p style="text-align:center; width:100%">Увійдіть в акаунт, щоб побачити кошик</p>';
+            return;
+        }
+        
+        const userEmail = JSON.parse(userDataStr).email;
+
+        fetch(API_CART_URL + '?action=get', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: userEmail })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                renderCart(data.items);
+                document.getElementById('totalPrice').textContent = `Сума до сплати: ${data.total} грн`;
+            } else {
+                document.getElementById('cartContainer').innerHTML = `<p style="text-align:center;">${data.message}</p>`;
+            }
+        })
+        .catch(err => console.error(err));
+    }
+
+    function renderCart(items) {
+        const container = document.getElementById('cartContainer');
+        container.innerHTML = ''; // Очистити
+
+        if (items.length === 0) {
+            container.innerHTML = '<p style="text-align:center; width:100%">Кошик порожній</p>';
+            return;
+        }
+
+        items.forEach(item => {
+            // Використовуємо дефолтне зображення, якщо немає в базі
+            const imgUrl = item.image_url || './image/image 1.png';
+            
+            const html = `
+            <div class="card-container" id="item-${item.item_id}">
+                <div class="shop-cart-img">
+                    <img class="card-img" src="${imgUrl}" alt="${item.name}">
+                    <!-- Кнопка видалення -->
+                    <button onclick="removeItem(${item.item_id})" style="position:absolute; top:10px; right:10px; background:white; border-radius:50%; width:30px; height:30px; border:none; cursor:pointer; color:red; font-weight:bold;">&times;</button>
+                </div>
+                <div class="card">
+                    <div class="card-text">
+                        <p class="card-name">${item.name}</p>
+                        <p class="card-descr">${item.price} грн за шт.</p>
+                    </div>
+                    <div class="card-details">
+                        <div>
+                            <p class="weight">${item.weight || '1 кг'}</p>
+                            <p class="card-price">${item.price * item.quantity} грн</p>
+                        </div>
+                        <div class="card-quantity">
+                            <span>${item.quantity} шт.</span>
+                        </div>  
+                    </div>
+                </div>
+            </div>
+            `;
+            container.innerHTML += html;
+        });
+    }
+
+    function removeItem(itemId) {
+        if(!confirm('Видалити цей товар з кошика?')) return;
+
+        fetch(API_CART_URL + '?action=remove', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ itemId: itemId })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if(data.success) {
+                loadCart(); // Перезавантажити кошик
+            } else {
+                alert(data.message);
+            }
+        });
+    }
+
+    function goToOrder() {
+        window.location.href = 'order.html';
+    }
+</script>
 </body>
 </html>
