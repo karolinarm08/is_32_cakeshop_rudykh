@@ -6,7 +6,6 @@
     <title id="pageTitle">Редагування товару</title>
     <link rel="stylesheet" href="style.css">
     <style>
-        /* Стилі для форми */
         .add-product-form {
             display: flex; flex-direction: column; gap: 20px; max-width: 800px;
             margin: 20px auto; padding: 20px; border: 1px solid var(--color-grey-light);
@@ -23,12 +22,10 @@
         .btn-submit { background-color: #7F4B93; color: white; border: none; cursor: pointer; padding: 12px 20px; border-radius: 10px; font-weight: bold; }
         .btn-submit:disabled { background-color: #ccc; cursor: not-allowed; }
         
-        /* Галерея */
         .thumbnail-row { display: flex; gap: 10px; overflow-x: auto; padding: 10px 0; }
         .thumbnail-wrapper { position: relative; width: 100px; height: 100px; flex-shrink: 0; }
         .thumbnail { width: 100%; height: 100%; object-fit: cover; border-radius: 10px; border: 2px solid #ddd; }
         
-        /* Кнопка видалення (хрестик) */
         .btn-delete-img {
             position: absolute; top: -5px; right: -5px;
             background: red; color: white; width: 24px; height: 24px;
@@ -48,12 +45,10 @@
         <form id="productForm" class="add-product-form" onsubmit="handleProductSubmit(event)">
             <input type="hidden" id="productId" name="product_id" value=""> 
             
-            <!-- Основне фото -->
             <div style="text-align: center;">
                 <img id="selectedImage" src="https://placehold.co/600x400/eee/999?text=No+Image" alt="Preview">
             </div>
 
-            <!-- Галерея -->
             <div>
                 <label>Галерея (Ви можете видаляти старі фото):</label>
                 <div class="thumbnail-row" id="thumbnailRow"></div>
@@ -104,7 +99,6 @@
                 </div>
             </div>
             
-            <!-- Завантаження нових фото -->
             <div class="form-group">
                 <label style="color: #2e7d32;">Додати НОВІ фото (з'являться після збереження):</label>
                 <input type="file" id="productImageUpload" name="images[]" accept="image/*" multiple>
@@ -122,7 +116,6 @@
     const thumbnailRow = document.getElementById('thumbnailRow');
     const selectedImage = document.getElementById('selectedImage');
 
-    // Перевірка на режим редагування при завантаженні
     document.addEventListener('DOMContentLoaded', () => {
         const urlParams = new URLSearchParams(window.location.search);
         const editId = urlParams.get('id');
@@ -131,13 +124,11 @@
         }
     });
 
-    // Заповнення форми даними
     async function enableEditMode(id) {
         document.getElementById('formTitle').textContent = 'Редагування товару #' + id;
         document.getElementById('productId').value = id;
         document.getElementById('submitBtn').textContent = 'ОНОВИТИ ТОВАР';
 
-        // URL залежить від того, де ми знаходимось (frontend папка чи корінь)
         let apiPath = window.location.pathname.includes('/frontend/') 
             ? '../backend/product_api.php?action=get&id=' + id 
             : '/backend/product_api.php?action=get&id=' + id;
@@ -164,8 +155,6 @@
         }
     }
 
-    // Відображення існуючих фото з кнопками видалення
-    // --- ОНОВЛЕНА ФУНКЦІЯ: Відображення існуючих фото з кнопками видалення ---
     function renderExistingImages(images) {
         thumbnailRow.innerHTML = '';
         if (!images || images.length === 0) return;
@@ -210,7 +199,7 @@
             const res = await response.json();
 
             if (res.success) {
-                element.remove(); // Видаляємо з екрану
+                element.remove();
                 if (selectedImage.src.includes(imgUrl)) selectedImage.src = defaultImageSrc;
             } else {
                 alert("Помилка: " + res.message);
@@ -220,11 +209,9 @@
         }
     }
 
-    // Попередній перегляд НОВИХ файлів (зелена рамка)
     document.getElementById('productImageUpload').addEventListener('change', function(e) {
         const files = e.target.files;
-        // Не очищаємо thumbnailRow, просто додаємо прев'ю в кінець
-        // Або можна очистити тільки "нові" прев'ю, якщо треба
+
         
         for (let i = 0; i < files.length; i++) {
             const file = files[i];
@@ -236,7 +223,7 @@
                 const img = document.createElement('img');
                 img.src = evt.target.result;
                 img.className = 'thumbnail';
-                img.style.borderColor = '#2e7d32'; // Зелена рамка для нових
+                img.style.borderColor = '#2e7d32';
                 img.style.borderWidth = '3px';
                 
                 wrapper.appendChild(img);
@@ -248,7 +235,6 @@
         }
     });
 
-    // Відправка форми
     async function handleProductSubmit(event) {
         event.preventDefault();
         const form = event.target;
@@ -267,7 +253,6 @@
         try {
             const response = await fetch(apiPath, { method: 'POST', body: formData });
             
-            // Читаємо відповідь як текст спочатку, щоб зловити PHP помилки
             const text = await response.text();
             let data;
             try {
@@ -286,7 +271,7 @@
                     thumbnailRow.innerHTML = '';
                     selectedImage.src = defaultImageSrc;
                 } else {
-                    location.reload(); // Перезавантажити, щоб побачити оновлені дані
+                    location.reload();
                 }
             } else {
                 alert("Помилка: " + data.message);

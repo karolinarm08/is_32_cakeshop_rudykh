@@ -206,11 +206,10 @@
 <script>
     document.querySelectorAll(".info-toggle").forEach(button => {
         button.addEventListener("click", function () {
-            const parent = this.parentElement; // Знаходимо батьківський елемент
+            const parent = this.parentElement; 
             const content = parent.querySelector(".info-content");
             const img = this.querySelector("img");
 
-            // Переключення відображення контенту
             if (content.style.display === "block") {
                 content.style.display = "none";
                 img.setAttribute("src", "./image/Chevron down.png");
@@ -221,22 +220,19 @@
         });
     });
 
-    // Перевіряємо, чи є фрагмент (#) у URL
     document.addEventListener("DOMContentLoaded", () => {
-        const fragment = window.location.hash; // Отримуємо фрагмент (#delivery-and-payment)
+        const fragment = window.location.hash; 
 
         if (fragment) {
-            const targetSection = document.querySelector(fragment); // Знаходимо елемент із ID
+            const targetSection = document.querySelector(fragment); 
             if (targetSection) {
-                // Відкриваємо секцію, якщо вона існує
-                const button = targetSection.querySelector(".info-toggle"); // Знаходимо кнопку
+                const button = targetSection.querySelector(".info-toggle"); 
                 const content = targetSection.querySelector(".info-content");
                 const img = button.querySelector("img");
 
-                content.style.display = "block"; // Відкриваємо контент
-                img.setAttribute("src", "./image/Chevron up.png"); // Міняємо іконку
+                content.style.display = "block"; 
+                img.setAttribute("src", "./image/Chevron up.png"); 
 
-                // Прокрутка до елемента з ID
                 targetSection.scrollIntoView({ behavior: "smooth", block: "start" });
             }
         }

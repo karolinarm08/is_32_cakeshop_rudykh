@@ -1416,8 +1416,6 @@ label {
     margin: 35px 0;
 }
 
-/* Добавляем в конец style.css */
-
 .status-new {
     background-color: #e3f2fd;
     color: #1976d2;
@@ -1454,7 +1452,6 @@ label {
     border: 1px solid #bdbdbd;
 }
 
-/* Стили для кнопки просмотра деталей заказа */
 .order-card .filter-button {
     margin-top: 10px;
     padding: 8px 16px;

@@ -1,7 +1,5 @@
-// Получить кнопку
 const scrollToTopBtn = document.getElementById('scrollToTopBtn');
     
-// Показать кнопку, когда пользователь прокрутил вниз на 100 пикселей
 window.onscroll = function () {
     if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
         scrollToTopBtn.style.display = "block";
@@ -10,11 +8,10 @@ window.onscroll = function () {
     }
 };
 
-// При нажатии на кнопку прокрутить вверх
 scrollToTopBtn.onclick = function () {
     window.scrollTo({
         top: 0,
-        behavior: 'smooth' // Плавная прокрутка
+        behavior: 'smooth' 
     });
 };
 

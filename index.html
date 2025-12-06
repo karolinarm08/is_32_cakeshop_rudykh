@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RUBY - Головна</title> 
-    <!-- Підключення шрифтів та стилів -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
@@ -13,7 +12,6 @@
     <link rel="stylesheet" href="style.css">
     <link rel="icon" type="image/x-icon" href="./image/favicon.ico">
     <style>
-        /* Стилі модального вікна */
         .modal-overlay {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background-color: rgba(0, 0, 0, 0.5); z-index: 2000;
@@ -407,28 +405,13 @@
 </div>
 
 <script>
-    // =========================================================
-    // НАЛАШТУВАННЯ API URL
-    // Спробуйте змінити цей шлях, якщо виникає помилка 404
-    // =========================================================
-    
-    // ВАРІАНТ 1: Абсолютний шлях (найбільш надійний)
-    // Якщо ваш сайт лежить в папці (наприклад, my-shop), додайте її: /my-shop/backend/api/auth.php
     let API_URL = '/backend/api/auth.php'; 
 
-    // АВТОМАТИЧНА ПЕРЕВІРКА (Спроба "вгадати" правильний шлях)
-    // Якщо ми в папці /frontend/, то треба піднятися на рівень вище
     if (window.location.pathname.includes('/frontend/')) {
         API_URL = '../backend/api/auth.php';
     }
-    
-    // Для InfinityFree часто структура така: /htdocs/frontend/... 
-    // Тоді для сайту це виглядає як site.com/frontend/index.html
-    // І правильний шлях: ../backend/api/auth.php
 
-    console.log("Using API URL:", API_URL); // Перевірте консоль браузера (F12)
-
-    // =========================================================
+    console.log("Using API URL:", API_URL); 
 
     const modal = document.getElementById('authModal');
     const accountBtn = document.getElementById('accountBtn');
@@ -493,7 +476,6 @@
                 body: JSON.stringify(data)
             });
 
-            // Перевірка на HTML відповідь (помилка 404 або 500)
             const contentType = response.headers.get("content-type");
             if (!contentType || !contentType.includes("application/json")) {
                 const text = await response.text();

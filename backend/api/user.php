@@ -1,5 +1,4 @@
 <?php
-// user.php - API для работы с пользователями
 
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
@@ -14,7 +13,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 }
 
 try {
-    // Автозагрузка классов
     spl_autoload_register(function ($class_name) {
         if (strpos($class_name, 'App\\') === 0) {
             $relative_class = substr($class_name, 4);
@@ -31,7 +29,6 @@ try {
     $data = json_decode($inputJSON, true) ?? [];
     $action = $_GET['action'] ?? '';
 
-    // Подключаем необходимые классы
     require_once __DIR__ . '/../src/Repositories/UserRepository.php';
     require_once __DIR__ . '/../src/Repositories/OrderRepository.php';
 
@@ -39,7 +36,6 @@ try {
     $orderRepository = new App\Repositories\OrderRepository();
 
     if ($action === 'updateProfile') {
-        // Обновление профиля пользователя
         $email = $data['email'] ?? '';
         if (empty($email)) {
             echo json_encode(['success' => false, 'message' => 'Email обов\'язковий']);
@@ -52,7 +48,6 @@ try {
             exit();
         }
 
-        // Обновляем данные
         if (isset($data['first_name'])) $user->firstName = $data['first_name'];
         if (isset($data['last_name'])) $user->lastName = $data['last_name'];
         if (isset($data['phone'])) $user->phone = $data['phone'];
@@ -75,7 +70,6 @@ try {
         }
 
     } elseif ($action === 'getProfile') {
-        // Получение профиля пользователя
         $email = $data['email'] ?? '';
         if (empty($email)) {
             echo json_encode(['success' => false, 'message' => 'Email обов\'язковий']);

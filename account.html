@@ -21,7 +21,6 @@
         .order-date { color: #888; font-size: 13px; }
         .order-status { padding: 4px 10px; border-radius: 15px; font-size: 12px; font-weight: bold; text-transform: uppercase; }
         
-        /* Статуси */
         .st-new { background: #e3f2fd; color: #1976d2; }
         .st-processing { background: #fff3e0; color: #f57c00; }
         .st-shipped { background: #e8f5e9; color: #388e3c; }
@@ -79,7 +78,6 @@
             </div>
 
             <div class="content">
-                <!-- ПЕРСОНАЛЬНІ ДАНІ -->
                 <div id="personal-inf" class="hidden">
                     <h3>Персональні дані</h3>
                     <form id="profileForm" class="personal-inf">
@@ -103,7 +101,6 @@
                     </form>
                 </div>
                 
-                <!-- АДРЕСИ ДОСТАВКИ -->
                 <div id="delivery-addresses" class="hidden">
                     <h3>Адреси доставки</h3>
                     <form id="addressForm" class="delivery-addresses">
@@ -131,7 +128,6 @@
                     </form>
                 </div>
                 
-                <!-- ІСТОРІЯ ЗАМОВЛЕНЬ -->
                 <div id="order-history" class="hidden">
                     <h3>Історія замовлень</h3>
                     <div id="historyList" class="history-list">
@@ -169,7 +165,6 @@
         }
         document.getElementById(sectionId).classList.remove('hidden');
 
-        // Якщо відкрили історію - завантажуємо її
         if (sectionId === 'order-history') {
             loadOrderHistory();
         }
@@ -190,7 +185,6 @@
             return;
         }
 
-        // Беремо email з localStorage для надійності
         let savedData = localStorage.getItem('user_data');
         if (savedData) {
             currentUserEmail = JSON.parse(savedData).email;
@@ -227,9 +221,7 @@
         showSection('personal-inf', firstButton);
     });
 
-    // --- ФУНКЦІЯ ЗАВАНТАЖЕННЯ ІСТОРІЇ (ВИПРАВЛЕНО) ---
     function loadOrderHistory() {
-        // Беремо email з змінної (з localStorage), а не з поля, щоб гарантувати наявність
         const email = currentUserEmail; 
         const container = document.getElementById('historyList');
         
@@ -257,7 +249,6 @@
                     let itemsHtml = '';
                     if (order.items && order.items.length > 0) {
                         order.items.forEach(item => {
-                            // Оскільки в БД price це unit_price, використовуємо правильне поле
                             const price = item.unit_price || item.price || 0; 
                             itemsHtml += `<li>${item.name} (${item.quantity} шт.) - ${price} грн</li>`;
                         });

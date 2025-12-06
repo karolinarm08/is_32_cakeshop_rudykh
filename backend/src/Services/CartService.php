@@ -18,19 +18,15 @@ class CartService
 
     public function addToCart(string $email, int $productId, int $quantity): array
     {
-        // 1. Знаходимо користувача за email
         $user = $this->userRepository->findByEmail($email);
         if (!$user) {
             return ['success' => false, 'message' => 'Користувача не знайдено'];
         }
 
-        // 2. Шукаємо кошик користувача
         $cart = $this->cartRepository->findCartByUserId($user->id);
         
-        // 3. Якщо кошика немає - створюємо
         $cartId = $cart ? $cart['id'] : $this->cartRepository->createCart($user->id);
 
-        // 4. Додаємо товар
         if ($this->cartRepository->addOrUpdateItem($cartId, $productId, $quantity)) {
             return ['success' => true, 'message' => 'Товар додано до кошика'];
         }
@@ -51,7 +47,6 @@ class CartService
 
         $items = $this->cartRepository->getCartItemsWithProductDetails($cart['id']);
         
-        // Рахуємо загальну суму
         $total = 0;
         foreach ($items as $item) {
             $total += $item['price'] * $item['quantity'];

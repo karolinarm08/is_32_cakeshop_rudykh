@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RUBY API Test Runner</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: "Montserrat", sans-serif; background: #f4f4f9; padding: 20px; max-width: 900px; margin: 0 auto; }
+        h1 { color: #7F4B93; text-align: center; }
+        .controls { text-align: center; margin-bottom: 20px; }
+        button { background: #7F4B93; color: white; border: none; padding: 12px 24px; font-size: 16px; cursor: pointer; border-radius: 5px; font-family: inherit; font-weight: bold; }
+        button:hover { background: #6a3e7a; }
+        button:disabled { background: #ccc; cursor: not-allowed; }
+        
+        .test-suite { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); margin-bottom: 20px; }
+        .test-suite h2 { margin-top: 0; border-bottom: 2px solid #eee; padding-bottom: 10px; font-size: 18px; }
+        
+        .test-case { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #f0f0f0; }
+        .test-case:last-child { border-bottom: none; }
+        .test-name { font-weight: 500; }
+        .test-status { font-weight: bold; font-size: 14px; min-width: 80px; text-align: right; }
+        
+        .status-pending { color: #999; }
+        .status-running { color: #e67e22; }
+        .status-pass { color: #2ecc71; }
+        .status-fail { color: #e74c3c; }
+        
+        .console-log { background: #2d3436; color: #dfe6e9; padding: 15px; border-radius: 5px; font-family: monospace; font-size: 12px; height: 200px; overflow-y: auto; margin-top: 20px; }
+        .log-entry { margin-bottom: 5px; border-bottom: 1px solid #444; padding-bottom: 2px; }
+        .log-success { color: #2ecc71; }
+        .log-error { color: #ff7675; }
+        
+        .progress-bar { height: 5px; background: #ddd; margin-top: 20px; border-radius: 5px; overflow: hidden; }
+        .progress-fill { height: 100%; background: #7F4B93; width: 0%; transition: width 0.3s; }
+    </style>
+</head>
+<body>
+
+    <h1>🔍 RUBY System Tests</h1>
+    
+    <div class="controls">
+        <button onclick="runAllTests()" id="runBtn">ЗАПУСТИТИ ВСІ ТЕСТИ</button>
+    </div>
+
+    <div class="progress-bar"><div class="progress-fill" id="progressBar"></div></div>
+
+    <!-- AUTH TESTS -->
+    <div class="test-suite">
+        <h2>1. Автентифікація (Auth API)</h2>
+        <div class="test-case" id="test-register">
+            <span class="test-name">Реєстрація нового користувача</span>
+            <span class="test-status status-pending">Очікування</span>
+        </div>
+        <div class="test-case" id="test-login">
+            <span class="test-name">Вхід існуючим користувачем</span>
+            <span class="test-status status-pending">Очікування</span>
+        </div>
+        <div class="test-case" id="test-login-fail">
+            <span class="test-name">Вхід з невірним паролем (Має бути помилка)</span>
+            <span class="test-status status-pending">Очікування</span>
+        </div>
+    </div>
+
+    <!-- PRODUCT TESTS -->
+    <div class="test-suite">
+        <h2>2. Товари (Product API)</h2>
+        <div class="test-case" id="test-products-list">
+            <span class="test-name">Отримання списку товарів</span>
+            <span class="test-status status-pending">Очікування</span>
+        </div>
+        <div class="test-case" id="test-product-detail">
+            <span class="test-name">Отримання деталей товару (ID=1)</span>
+            <span class="test-status status-pending">Очікування</span>
+        </div>
+    </div>
+
+    <!-- CART & ORDER TESTS -->
+    <div class="test-suite">
+        <h2>3. Кошик та Замовлення</h2>
+        <div class="test-case" id="test-cart-add">
+            <span class="test-name">Додавання товару в кошик</span>
+            <span class="test-status status-pending">Очікування</span>
+        </div>
+        <div class="test-case" id="test-cart-get">
+            <span class="test-name">Перевірка вмісту кошика</span>
+            <span class="test-status status-pending">Очікування</span>
+        </div>
+        <div class="test-case" id="test-order-create">
+            <span class="test-name">Створення замовлення</span>
+            <span class="test-status status-pending">Очікування</span>
+        </div>
+    </div>
+
+    <div class="console-log" id="consoleLog">
+        <div>System ready. Press "Запустити всі тести" to start...</div>
+    </div>
+
+    <script>
+        // КОНФІГУРАЦІЯ
+        // Змінюємо базовий URL залежно від того, де файл відкрито
+        // Якщо файл відкритий просто як файл, API не спрацює (потрібен сервер)
+        const API_BASE = '../backend/api/'; // Відносний шлях для XAMPP
+        const testEmail = `test_auto_${Date.now()}@example.com`; // Унікальний email для кожного запуску
+        const testPass = 'password123';
+        let testUserId = null;
+
+        function log(msg, type = 'info') {
+            const consoleDiv = document.getElementById('consoleLog');
+            const entry = document.createElement('div');
+            entry.className = 'log-entry ' + (type === 'error' ? 'log-error' : (type === 'success' ? 'log-success' : ''));
+            entry.textContent = `[${new Date().toLocaleTimeString()}] ${msg}`;
+            consoleDiv.appendChild(entry);
+            consoleDiv.scrollTop = consoleDiv.scrollHeight;
+        }
+
+        function setStatus(id, status, text) {
+            const el = document.querySelector(`#${id} .test-status`);
+            el.className = `test-status status-${status}`;
+            el.textContent = text || status.toUpperCase();
+            if(status === 'fail') log(`TEST FAILED: ${id}`, 'error');
+        }
+
+        async function runAllTests() {
+            const btn = document.getElementById('runBtn');
+            btn.disabled = true;
+            document.getElementById('progressBar').style.width = '0%';
+            
+            log("--- STARTING TEST SUITE ---");
+            
+            try {
+                // 1. REGISTER
+                await runTest('test-register', async () => {
+                    const res = await fetch(API_BASE + 'auth.php?action=register', {
+                        method: 'POST', body: JSON.stringify({ email: testEmail, password: testPass, name: 'AutoTester' })
+                    });
+                    const data = await res.json();
+                    if (!data.success) throw new Error(data.message);
+                    return "OK";
+                });
+                updateProgress(15);
+
+                // 2. LOGIN
+                await runTest('test-login', async () => {
+                    const res = await fetch(API_BASE + 'auth.php?action=login', {
+                        method: 'POST', body: JSON.stringify({ email: testEmail, password: testPass })
+                    });
+                    const data = await res.json();
+                    if (!data.success) throw new Error(data.message);
+                    testUserId = data.user.id; // Save ID for later
+                    return "OK";
+                });
+                updateProgress(30);
+
+                // 3. LOGIN FAIL
+                await runTest('test-login-fail', async () => {
+                    const res = await fetch(API_BASE + 'auth.php?action=login', {
+                        method: 'POST', body: JSON.stringify({ email: testEmail, password: 'wrong_password' })
+                    });
+                    const data = await res.json();
+                    // Тут ми очікуємо success: false. Якщо true - це помилка тесту
+                    if (data.success) throw new Error("Вхід вдався з невірним паролем!");
+                    return "OK (Відмовлено)";
+                });
+                updateProgress(45);
+
+                // 4. PRODUCTS LIST
+                await runTest('test-products-list', async () => {
+                    const res = await fetch('../backend/product_api.php?action=list');
+                    const data = await res.json();
+                    if (!data.success || !Array.isArray(data.products)) throw new Error("Невірний формат відповіді");
+                    if (data.products.length === 0) log("Warning: Products list is empty", 'error');
+                    return `OK (${data.products.length} items)`;
+                });
+                updateProgress(60);
+
+                // 5. CART ADD
+                await runTest('test-cart-add', async () => {
+                    const res = await fetch(API_BASE + 'cart.php?action=add', {
+                        method: 'POST', body: JSON.stringify({ email: testEmail, product_id: 1, quantity: 2 })
+                    });
+                    const data = await res.json();
+                    if (!data.success) throw new Error(data.message);
+                    return "OK";
+                });
+                updateProgress(75);
+
+                // 6. CART GET
+                await runTest('test-cart-get', async () => {
+                    const res = await fetch(API_BASE + 'cart.php?action=get', {
+                        method: 'POST', body: JSON.stringify({ email: testEmail })
+                    });
+                    const data = await res.json();
+                    if (!data.success) throw new Error(data.message);
+                    // Перевіряємо чи є там товар
+                    const hasItem = data.items.some(i => i.product_id == 1 && i.quantity == 2);
+                    if (!hasItem) throw new Error("Товар не знайдено в кошику");
+                    return "OK";
+                });
+                updateProgress(90);
+
+                // 7. ORDER CREATE
+                await runTest('test-order-create', async () => {
+                    const orderData = {
+                        email: testEmail,
+                        deliveryAddress: { city: 'Test City', street: 'Test St', house: '1' },
+                        paymentMethod: 'cash'
+                    };
+                    const res = await fetch(API_BASE + 'order.php?action=create', {
+                        method: 'POST', body: JSON.stringify(orderData)
+                    });
+                    const data = await res.json();
+                    if (!data.success) throw new Error(data.message);
+                    return `OK (Order #${data.order_id})`;
+                });
+                updateProgress(100);
+
+                log("--- ALL TESTS COMPLETED SUCCESSFULLY ---", 'success');
+
+            } catch (e) {
+                log("--- TESTING STOPPED DUE TO CRITICAL ERROR ---", 'error');
+            } finally {
+                btn.disabled = false;
+            }
+        }
+
+        async function runTest(elementId, testFn) {
+            setStatus(elementId, 'running', '...');
+            try {
+                const resultMsg = await testFn();
+                setStatus(elementId, 'pass', resultMsg);
+                log(`${elementId}: Passed`, 'success');
+            } catch (error) {
+                setStatus(elementId, 'fail', 'FAIL');
+                log(`${elementId} FAILED: ${error.message}`, 'error');
+                throw error; // Stop chain
+            }
+        }
+
+        function updateProgress(percent) {
+            document.getElementById('progressBar').style.width = percent + '%';
+        }
+    </script>
+</body>
+</html>

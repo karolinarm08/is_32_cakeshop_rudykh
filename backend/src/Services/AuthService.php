@@ -41,7 +41,6 @@ class AuthService
         return $this->formatUserData($user, 'Вхід успішний');
     }
 
-    // Отримання повного профілю (User + Address)
     public function getUserProfile(string $email): array
     {
         $user = $this->userRepository->findByEmail($email);
@@ -85,7 +84,6 @@ class AuthService
         return ['success' => false, 'message' => 'Помилка збереження адреси'];
     }
 
-    // Допоміжний метод для формування відповіді
     private function formatUserData(User $user, string $msg): array
     {
         $address = $this->addressRepository->findByUserId($user->id);

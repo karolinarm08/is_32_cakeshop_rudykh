@@ -17,7 +17,6 @@
         
         .status-select { padding: 8px; border-radius: 5px; border: 1px solid #ccc; font-family: inherit; width: 100%; cursor: pointer; }
         
-        /* Кольори статусів */
         .status-new { background-color: #e3f2fd; color: #0d47a1; }
         .status-processing { background-color: #fff3e0; color: #e65100; }
         .status-shipped { background-color: #e8f5e9; color: #1b5e20; }
@@ -73,14 +72,12 @@
     </main>
 
     <script>
-        // API URL
         let API_ORDER = '/backend/api/order.php';
         if (window.location.pathname.includes('/frontend/')) { API_ORDER = '../backend/api/order.php'; }
 
         let currentUserEmail = '';
 
         document.addEventListener('DOMContentLoaded', () => {
-            // 1. Перевірка на адміна
             const userDataStr = localStorage.getItem('user_data');
             if (!userDataStr) {
                 window.location.href = 'index.html';
@@ -130,21 +127,17 @@
             orders.forEach(order => {
                 const tr = document.createElement('tr');
                 
-                // Товари
                 let itemsHtml = '<ul class="items-list">';
                 if (order.items && Array.isArray(order.items)) {
                     order.items.forEach(item => {
-                        // ВИПРАВЛЕНО: item.unit_price замість item.price
                         const price = item.unit_price || item.price || 0; 
                         itemsHtml += `<li>• ${item.name} (x${item.quantity}) - ${price} грн</li>`;
                     });
                 }
                 itemsHtml += '</ul>';
 
-                // Адреса
                 const address = order.city ? `${order.city}, ${order.street} ${order.house}, кв. ${order.apartment || '-'}` : 'Самовивіз';
                 
-                // Клієнт
                 const clientInfo = `
                     <div class="client-info">
                         <b>${order.first_name} ${order.last_name || ''}</b><br>
@@ -153,8 +146,6 @@
                     </div>
                 `;
 
-                // Селект статусу
-                // Додаємо клас кольору відповідно до поточного статусу
                 const statusSelect = `
                     <select class="status-select status-${order.status}" onchange="changeStatus(${order.id}, this)">
                         <option value="new" ${order.status === 'new' ? 'selected' : ''}>Нове</option>
@@ -181,10 +172,8 @@
         async function changeStatus(orderId, selectElement) {
             const newStatus = selectElement.value;
             
-            // Візуальна зміна кольору одразу
             selectElement.className = `status-select status-${newStatus}`;
             
-            // Блокуємо селект на час запиту
             selectElement.disabled = true;
 
             try {
@@ -204,7 +193,6 @@
                     showSuccess(`Статус замовлення #${orderId} оновлено!`);
                 } else {
                     showError('Помилка: ' + data.message);
-                    // Можна повернути старе значення, якщо треба
                 }
             } catch (err) {
                 showError("Помилка з'єднання");

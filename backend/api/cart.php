@@ -1,7 +1,7 @@
 <?php
 ini_set('display_errors', 0);
 error_reporting(E_ALL);
-
+date_default_timezone_set('Europe/Kiev');
 register_shutdown_function(function() {
     $error = error_get_last();
     if ($error !== null && in_array($error['type'], [E_ERROR, E_PARSE, E_CORE_ERROR, E_COMPILE_ERROR])) {

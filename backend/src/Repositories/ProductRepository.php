@@ -8,27 +8,22 @@ use \PDOException;
 
 class ProductRepository
 {
-    public PDO $db; // Зроблено public для передачі в ImageRepository
+    public PDO $db;
 
     public function __construct()
     {
-        // -----------------------------------------------------
-        // !!! ВАШІ РЕАЛЬНІ ДАНІ ХОСТИНГУ !!!
-        // -----------------------------------------------------
-        $host = 'sql100.infinityfree.com';      // Наприклад: 'localhost' або IP хостингу
-        $dbName = 'if0_40472805_cakeshop';      // Назва вашої бази даних
-        $user = 'if0_40472805';      // Ім'я користувача бази даних
-        $pass = 'dcmRXnx3yUO78';     // MySQL Password
+        $host = 'sql100.infinityfree.com';
+        $dbName = 'if0_40472805_cakeshop';
+        $user = 'if0_40472805';
+        $pass = 'dcmRXnx3yUO78';
         // -----------------------------------------------------
 
         try {
-            // Використовуємо utf8mb4 для повної підтримки Unicode (кирилиця)
             $dsn = "mysql:host=$host;dbname=$dbName;charset=utf8mb4";
             $options = [
                 PDO::ATTR_ERRMODE             => PDO::ERRMODE_EXCEPTION,
                 PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
                 PDO::ATTR_EMULATE_PREPARES    => false,
-                // Явно встановлюємо кодування для гарантії
                 PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci" 
             ];
             
@@ -41,20 +36,14 @@ class ProductRepository
         }
     }
 
-    /**
-     * Отримує всі активні продукти з бази даних.
-     * @return array Масив об'єктів Product.
-     */
     public function findAllActive(): array
     {
         try {
-            // Вибираємо всі необхідні поля для відображення
             $stmt = $this->db->query("SELECT id, name, description, price, weight, category_id, is_active FROM products WHERE is_active = 1 ORDER BY created_at DESC");
             $productsData = $stmt->fetchAll();
             $products = [];
 
             foreach ($productsData as $data) {
-                // Створення об'єкта Product з даними з БД
                 $product = new Product(
                     $data['name'],
                     (float)$data['price'],
@@ -62,7 +51,7 @@ class ProductRepository
                     (float)$data['weight'],
                     (int)$data['category_id'],
                     (bool)$data['is_active'],
-                    (int)$data['id'] // Передаємо ID для подальшої роботи
+                    (int)$data['id']
                 );
                 $products[] = $product;
             }
@@ -74,11 +63,6 @@ class ProductRepository
         }
     }
 
-    /**
-     * Отримує один продукт за ID з бази даних.
-     * @param int $id ID продукту.
-     * @return ?Product Об'єкт Product або null.
-     */
     public function findById(int $id): ?Product
     {
         try {
@@ -105,9 +89,7 @@ class ProductRepository
             return null;
         }
     }
-    
-    // --- ДОДАТКОВІ МЕТОДИ ДЛЯ getProductById ---
-    
+        
     public function findAdditionalDetails(int $id): array
     {
         return [
@@ -130,7 +112,6 @@ class ProductRepository
     
     public function findRecommendedProducts(int $limit): array
     {
-        // Для спрощення повертаємо випадкові 3 товари з БД
         try {
             $stmt = $this->db->query("SELECT p.*, (SELECT image_url FROM product_images WHERE product_id = p.id LIMIT 1) as main_image FROM products p WHERE is_active = 1 ORDER BY RAND() LIMIT 3");
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -139,9 +120,6 @@ class ProductRepository
         }
     }
 
-    /**
-     * Зберігає новий продукт у базі даних.
-     */
     public function save(Product $product): bool
     {
         try {
@@ -171,9 +149,6 @@ class ProductRepository
         }
     }
 
-    /**
-     * Оновлює існуючий продукт.
-     */
     public function update(Product $product): bool
     {
         try {
@@ -204,17 +179,12 @@ class ProductRepository
         }
     }
 
-    /**
-     * Видаляє продукт за ID.
-     */
     public function delete(int $id): bool
     {
         try {
-            // Спочатку видаляємо пов'язані зображення (якщо немає каскадного видалення в БД)
             $stmtImg = $this->db->prepare("DELETE FROM product_images WHERE product_id = ?");
             $stmtImg->execute([$id]);
 
-            // Видаляємо сам продукт
             $stmt = $this->db->prepare("DELETE FROM products WHERE id = ?");
             return $stmt->execute([$id]);
 

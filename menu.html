@@ -44,7 +44,6 @@
                 <button class="filter"><i class="fa fa-filter"></i></button>
                 <button class="filter-button">НОВИНКИ</button>        
                 <button class="filter-button">ТОРТИ</button>
-                <!-- Інші фільтри -->
             </div>
             <form class="search-form">
                 <input class="search-input" type="text" placeholder="Пошук...">
@@ -53,7 +52,6 @@
         </div>
         
         <div class="menu-cards-container" id="productsContainer">
-            <!-- КНОПКА ДОДАВАННЯ (Прихована за замовчуванням) -->
             <a href="./product_change.html" class="add-container" id="addProductBtn" style="display: none;">
                 <img src="./image/Group 76.jpg" alt="" class="add-button">
             </a>
@@ -71,23 +69,20 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-        checkAdminRights(); // Перевірка прав
-        fetchProducts();    // Завантаження товарів
+        checkAdminRights(); 
+        fetchProducts();    
     });
 
-    // Функція перевірки прав
     function checkAdminRights() {
         const userDataStr = localStorage.getItem('user_data');
         if (userDataStr) {
             const user = JSON.parse(userDataStr);
-            console.log("User role:", user.role); // Для дебагу
+            console.log("User role:", user.role); 
             
-            // Якщо роль 'admin' - показуємо кнопку
             if (user.role === 'admin') {
                 const btn = document.getElementById('addProductBtn');
                 if (btn) btn.style.display = 'flex';
                 
-                // Додаємо посилання на адмін-панель в меню
                 const navFirst = document.querySelector('.nav-first');
                 if (navFirst) {
                     const adminLink = document.createElement('a');

@@ -41,20 +41,16 @@ class AddressRepository
 
     public function save(Address $address): bool
     {
-        // Перевіряємо, чи є вже адреса у цього користувача
         $existing = $this->findByUserId($address->userId);
 
         if ($existing) {
-            // Оновлюємо (UPDATE)
             $query = "UPDATE addresses SET city = :city, street = :street, house = :house, apartment = :apart, floor = :floor WHERE user_id = :uid";
         } else {
-            // Створюємо нову (INSERT)
             $query = "INSERT INTO addresses (user_id, city, street, house, apartment, floor) VALUES (:uid, :city, :street, :house, :apart, :floor)";
         }
 
         $stmt = $this->conn->prepare($query);
 
-        // Очистка
         $city = htmlspecialchars(strip_tags($address->city));
         $street = htmlspecialchars(strip_tags($address->street));
         $house = htmlspecialchars(strip_tags($address->house));

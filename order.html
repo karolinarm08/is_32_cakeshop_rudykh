@@ -49,9 +49,7 @@
             <h2 class="title">Оформлення замовлення</h2>
             
             <div class="order-grid">
-                <!-- Левая колонка: Формы -->
                 <div class="order-forms">
-                    <!-- Персональные данные -->
                     <div class="form-group">
                         <h3>Персональні дані</h3>
                         <div class="account-link">
@@ -81,11 +79,9 @@
                         </div>
                     </div>
 
-                    <!-- Адрес доставки -->
                     <div class="form-group">
                         <h3>Адреса доставки</h3>
                         <div id="saved-addresses" class="saved-addresses">
-                            <!-- Сохраненные адреса будут загружены здесь -->
                         </div>
                         
                         <div class="form-row">
@@ -118,7 +114,6 @@
                         </div>
                     </div>
 
-                    <!-- Способ оплаты -->
                     <div class="form-group">
                         <h3>Спосіб оплати</h3>
                         <div class="radio-group">
@@ -133,7 +128,6 @@
                         </div>
                     </div>
 
-                    <!-- Комментарий к заказу -->
                     <div class="form-group">
                         <h3>Коментар до замовлення (необов'язково)</h3>
                         <div class="full-width">
@@ -143,9 +137,7 @@
                     </div>
                 </div>
 
-                <!-- Правая колонка: Корзина и итоги -->
                 <div class="order-summary">
-                    <!-- Товары в корзине -->
                     <div class="summary-section">
                         <h3>Ваше замовлення</h3>
                         <div id="cartItemsContainer" class="order-cards">
@@ -153,7 +145,6 @@
                         </div>
                     </div>
 
-                    <!-- Итоговая сумма -->
                     <div class="summary-section">
                         <h3>Підсумок</h3>
                         <div class="price-summary">
@@ -172,7 +163,6 @@
                         </div>
                     </div>
 
-                    <!-- Соглашения -->
                     <div class="summary-section">
                         <div class="checkbox-group">
                             <label class="checkbox-label">
@@ -186,7 +176,6 @@
                         </div>
                     </div>
 
-                    <!-- Кнопка подтверждения -->
                     <div class="summary-section">
                         <button type="button" class="confirm-button" onclick="submitOrder()">
                             Підтвердити замовлення
@@ -200,7 +189,6 @@
     <div id="footer"></div>
 
     <style>
-        /* Основные стили для новой структуры (оставлены, так как они относятся к макету страницы заказа) */
         .order-grid {
             display: grid;
             grid-template-columns: 1fr;
@@ -311,7 +299,6 @@
             height: 18px;
         }
 
-        /* Правая колонка */
         .order-summary {
             display: flex;
             flex-direction: column;
@@ -328,25 +315,22 @@
             border: 1px solid var(--color-grey-light);
         }
 
-        /* КОНТЕЙНЕР ДЛЯ КАРТОЧЕК В ЗАКАЗЕ: ИЗМЕНЕНО НА ГОРИЗОНТАЛЬНУЮ ПРОКРУТКУ */
         .order-cards {
             display: flex;
-            flex-direction: row; /* Изменено с column на row */
-            flex-wrap: nowrap; /* Запрет переноса строк */
-            gap: 15px; /* Увеличим отступ между карточками */
-            overflow-x: auto; /* Горизонтальная прокрутка */
-            overflow-y: hidden; /* Убираем вертикальную прокрутку */
-            padding-bottom: 15px; /* Добавляем отступ для полосы прокрутки */
+            flex-direction: row; 
+            flex-wrap: nowrap;
+            gap: 15px; 
+            overflow-x: auto; 
+            overflow-y: hidden; 
+            padding-bottom: 15px; 
             
-            /* Убираем ненужные ограничения, так как прокрутка уже есть */
             max-height: none; 
             padding-right: 0; 
         }
 
-        /* Убираем стили прокрутки Y, оставляем только для X */
         .order-cards::-webkit-scrollbar {
-            height: 10px; /* Уменьшаем высоту полосы прокрутки X */
-            width: 6px; /* Ширина полосы прокрутки Y (если бы она была) */
+            height: 10px; 
+            width: 6px; 
         }
         
         .order-cards::-webkit-scrollbar-thumb {
@@ -354,32 +338,28 @@
              border-radius: 100px;
         }
         
-        /* СТИЛЬ ДЛЯ САМОЙ КАРТОЧКИ: Используем .card-container из style.css и добавляем класс для адаптации */
         .order-card-small {
-            /* 1. Ограничиваем максимальную ширину для компактности */
             max-width: 250px; 
-            flex-shrink: 0; /* Запрещаем сжимать карточку меньше max-width */
-            margin-right: 0; /* Убираем лишний margin-right */
+            flex-shrink: 0; 
+            margin-right: 0; 
             
-            /* Используем стили .card-container из style.css, но уменьшаем размеры текста */
             width: 100%; 
             transition: box-shadow 0.4s ease-in-out;
             background-color: var(--color-background); 
             border: 0; 
         }
 
-        /* Адаптируем размеры карточек на маленьких экранах, чтобы они снова занимали всю ширину */
         @media (max-width: 992px) {
             .order-card-small {
-                max-width: 45%; /* Уменьшаем до 45% ширины контейнера на средних экранах */
-                min-width: 180px; /* Минимальная ширина, чтобы карточка не была слишком узкой */
+                max-width: 45%; 
+                min-width: 180px; 
                 align-self: stretch;
             }
         }
         
         @media (max-width: 500px) {
             .order-card-small {
-                max-width: 60%; /* На очень маленьких экранах делаем их немного шире */
+                max-width: 60%; 
                 min-width: 150px; 
             }
         }
@@ -389,22 +369,19 @@
             box-shadow: 0px 0px 10px 4px rgba(73, 129, 147, 0.2);
         }
         
-        /* Переопределяем стили текста для компактности */
         .order-card-small .card-name {
             font-size: 16px; 
             line-height: 1.2;
             margin-bottom: 2px;
         }
         
-        /* Адаптируем описание/количество */
         .order-card-small .card-descr {
             font-size: 12px; 
             -webkit-line-clamp: 1; 
             opacity: 0.8;
-            margin-bottom: 4px; /* Небольшой отступ */
+            margin-bottom: 4px; 
         }
 
-        /* Адаптируем контейнер деталей, чтобы цена выглядела аккуратно */
         .order-card-small .card-details {
             margin-top: 5px;
         }
@@ -414,12 +391,10 @@
         }
 
         .order-card-small .card-price {
-            font-size: 20px; /* Уменьшаем цену */
+            font-size: 20px; 
             font-weight: 700;
         }
-        
-        /* Конец адаптивных стилей карточки товара для Order */
-
+    
 
         .price-summary {
             display: flex;
@@ -519,7 +494,6 @@
             border: 1px solid #90caf9;
         }
 
-        /* Сохраненные адреса */
         .saved-addresses {
             margin-bottom: 20px;
         }
@@ -582,7 +556,6 @@
         }
 
         @media (max-width: 767px) {
-            /* Адаптивные стили для order-card-small, если она становится слишком широкой на мобильном */
             .order-card-small {
                 max-width: 100%; 
             }
@@ -590,23 +563,19 @@
     </style>
 
 <script>
-    // Налаштування API
-    // Визначаємо правильний шлях в залежності від того, де ми знаходимось
     const isFrontend = window.location.pathname.includes('/frontend/');
     const API_BASE = isFrontend ? '../backend/api/' : 'backend/api/';
     
-    // Використовуємо auth.php для отримання профілю, бо він повертає і адресу
     const API_AUTH_URL = API_BASE + 'auth.php'; 
     const API_CART_URL = API_BASE + 'cart.php';
     const API_ORDER_URL = API_BASE + 'order.php';
 
     document.addEventListener('DOMContentLoaded', () => {
-        loadUserProfile(); // Завантажуємо профіль та адресу з сервера
-        loadCartItems();   // Завантажуємо товари
+        loadUserProfile();
+        loadCartItems();   
         setupFormValidation();
     });
 
-    // 1. Завантаження даних користувача та адреси
     async function loadUserProfile() {
         const userDataStr = localStorage.getItem('user_data');
         if (!userDataStr) {
@@ -619,7 +588,6 @@
         const email = localData.email;
 
         try {
-            // Робимо запит за свіжими даними (включаючи адресу)
             const response = await fetch(API_AUTH_URL + '?action=getProfile', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -631,17 +599,13 @@
             if (data.success && data.user) {
                 const u = data.user;
                 
-                // Заповнюємо Персональні дані
-                // Перевіряємо ключі: name/firstName, lastName, phone
                 document.getElementById('email').value = u.email || '';
                 document.getElementById('fname').value = u.name || u.firstName || '';
                 document.getElementById('lname').value = u.lastName || '';
                 document.getElementById('phnumber').value = u.phone || '';
 
-                // Якщо у користувача збережена адреса - заповнюємо її
                 if (u.address) {
                     fillAddressFields(u.address);
-                    // Також відобразимо її у списку "Збережені адреси" для наочності
                     renderSavedAddresses([u.address]); 
                 }
             } else {
@@ -652,7 +616,6 @@
         }
     }
 
-    // Допоміжна функція для заповнення полів адреси
     function fillAddressFields(addr) {
         if (!addr) return;
         document.getElementById('city').value = addr.city || '';
@@ -662,7 +625,6 @@
         document.getElementById('floor').value = addr.floor || '';
     }
 
-    // Відображення збереженої адреси (якщо треба вибрати ще раз)
     function renderSavedAddresses(addresses) {
         const container = document.getElementById('saved-addresses');
         if (!addresses || addresses.length === 0) return;
@@ -684,7 +646,6 @@
         });
     }
 
-    // 2. Завантаження кошика
     function loadCartItems() {
         const userDataStr = localStorage.getItem('user_data');
         if (!userDataStr) return;
@@ -738,8 +699,6 @@
     }
 
     function updateSummary(subtotal, count) {
-        // Логіка доставки: якщо сума > 1000, доставка безкоштовна (приклад)
-        // Або фіксована 50 грн, як у старому коді
         const deliveryCost = (count > 0) ? 0 : 0; 
         
         document.getElementById('subtotal').textContent = parseFloat(subtotal).toFixed(2) + ' грн';
@@ -747,16 +706,14 @@
         document.getElementById('total-price').textContent = (parseFloat(subtotal) + deliveryCost).toFixed(2) + ' грн';
     }
 
-    // 3. Відправка замовлення
     async function submitOrder() {
         if (!validateForm()) return;
 
         const userDataStr = localStorage.getItem('user_data');
         const userEmail = JSON.parse(userDataStr).email;
 
-        // Збираємо дані
         const orderData = {
-            email: userEmail, // Основний ідентифікатор
+            email: userEmail, 
             userData: {
                 first_name: document.getElementById('fname').value,
                 last_name: document.getElementById('lname').value,
@@ -784,7 +741,6 @@
                 body: JSON.stringify(orderData)
             });
             
-            // Перевірка на HTML відповідь (помилка сервера)
             const text = await response.text();
             let data;
             try {
@@ -797,7 +753,6 @@
             if (data.success) {
                 showMessage(`✅ Замовлення №${data.order_id} успішно створено!`, 'success');
                 setTimeout(() => {
-                    // Перенаправлення в кабінет
                     window.location.href = 'account.html';
                 }, 2000);
             } else {
@@ -814,7 +769,6 @@
         }
     }
 
-    // Валідація
     function validateForm() {
         const requiredIds = ['fname', 'lname', 'phnumber', 'email', 'city', 'street', 'house'];
         let isValid = true;
@@ -845,7 +799,6 @@
         box.style.display = 'block';
     }
 
-    // Валідація при введенні
     function setupFormValidation() {
         const inputs = document.querySelectorAll('.account-input');
         inputs.forEach(input => {

@@ -17,15 +17,14 @@ class OrderRepository
 
     public function createOrder(int $userId, float $total, ?int $addressId = null): int
     {
-        $createdAt = date('Y-m-d H:i:s');
-        $query = "INSERT INTO orders (user_id, total_price, status, address_id, created_at) 
-                  VALUES (:user_id, :total, 'new', :address_id, :created_at)";
+$query = "INSERT INTO orders (user_id, total_price, status, address_id, created_at) 
+                  VALUES (:user_id, :total, 'new', :address_id, NOW())"; // <--- ЗМІНА ТУТ
         $stmt = $this->conn->prepare($query);
 
         $stmt->bindParam(':user_id', $userId);
         $stmt->bindParam(':total', $total);
         $stmt->bindParam(':address_id', $addressId);
-        $stmt->bindParam(':created_at', $createdAt);
+        // Видалено: $stmt->bindParam(':created_at', $createdAt);
 
         if ($stmt->execute()) {
             return (int) $this->conn->lastInsertId();
@@ -49,7 +48,6 @@ class OrderRepository
         }
     }
 
-    // Пошук замовлень КОНКРЕТНОГО користувача
     public function findByUserId(int $userId): array
     {
         $query = "SELECT o.*, a.city, a.street, a.house 
@@ -63,7 +61,6 @@ class OrderRepository
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    // Для адміна: всі замовлення
     public function findAllOrders(): array
     {
         $query = "
@@ -90,7 +87,6 @@ class OrderRepository
         return $stmt->execute();
     }
     
-    // Отримати товари для замовлення
     public function getOrderItems(int $orderId): array
     {
         $query = "

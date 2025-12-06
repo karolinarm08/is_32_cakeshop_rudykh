@@ -1,8 +1,7 @@
 <?php
-// Вимикаємо вивід помилок у HTML
 ini_set('display_errors', 0);
 error_reporting(E_ALL);
-
+date_default_timezone_set('Europe/Kiev');
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type, Authorization");

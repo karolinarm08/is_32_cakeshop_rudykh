@@ -57,12 +57,10 @@ class OrderService
         return ['success' => false, 'message' => 'Помилка створення замовлення'];
     }
 
-    // --- ІСТОРІЯ ЗАМОВЛЕНЬ (для користувача) ---
     public function getUserOrders(int $userId): array
     {
         $orders = $this->orderRepository->findByUserId($userId);
         
-        // Додаємо список товарів до кожного замовлення
         foreach ($orders as &$order) {
             $order['items'] = $this->orderRepository->getOrderItems($order['id']);
         }
@@ -70,7 +68,6 @@ class OrderService
         return ['success' => true, 'orders' => $orders];
     }
 
-    // --- ДЛЯ АДМІНА ---
     public function getAllOrders(): array
     {
         $orders = $this->orderRepository->findAllOrders();
@@ -99,7 +96,6 @@ class OrderService
         return ['success' => false, 'message' => 'Помилка оновлення статусу'];
     }
 
-    // --- ВІДПРАВКА EMAIL ---
     private function sendOrderEmail($userId, $orderId, $total, $status) {
         $user = $this->userRepository->findById($userId);
         if ($user) {

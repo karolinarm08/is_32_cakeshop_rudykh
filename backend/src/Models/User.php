@@ -26,25 +26,21 @@ class User
         $this->createdAt = date('Y-m-d H:i:s');
     }
 
-    // Проверка пароля
     public function verifyPassword(string $password): bool
     {
         return password_verify($password, $this->passwordHash);
     }
 
-    // Хеширование пароля
     public static function hashPassword(string $password): string
     {
         return password_hash($password, PASSWORD_DEFAULT);
     }
 
-    // Полное имя
     public function getFullName(): string
     {
         return trim($this->firstName . ' ' . $this->lastName);
     }
 
-    // Проверка, является ли админом
     public function isAdmin(): bool
     {
         return $this->role === 'admin';

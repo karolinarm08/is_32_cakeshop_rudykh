@@ -35,7 +35,6 @@ class UserRepository
         return null;
     }
 
-    // НОВЫЙ МЕТОД: Найти пользователя по ID
     public function findById(int $id): ?User
     {
         $query = "SELECT * FROM users WHERE id = :id LIMIT 1";
@@ -81,7 +80,6 @@ class UserRepository
         return false;
     }
 
-    // НОВЫЙ МЕТОД: Получить ID последнего вставленного пользователя
     public function getLastInsertId(): int
     {
         return (int)$this->conn->lastInsertId();
@@ -106,7 +104,6 @@ class UserRepository
         return $stmt->execute();
     }
 
-    // НОВЫЙ МЕТОД: Получить адреса пользователя
     public function getUserAddresses(int $userId): array
     {
         $query = "SELECT * FROM addresses WHERE user_id = :user_id ORDER BY id DESC";
@@ -117,7 +114,6 @@ class UserRepository
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    // НОВЫЙ МЕТОД: Добавить адрес пользователя
     public function addUserAddress(int $userId, array $addressData): int
     {
         $query = "INSERT INTO addresses (user_id, city, street, house, apartment, floor) 
@@ -139,7 +135,6 @@ class UserRepository
         return 0;
     }
 
-    // НОВЫЙ МЕТОД: Получить пользователя с адресами
     public function getUserWithAddresses(string $email): ?array
     {
         $user = $this->findByEmail($email);
@@ -155,7 +150,6 @@ class UserRepository
         ];
     }
 
-    // НОВЫЙ МЕТОД: Проверить существование пользователя
     public function userExists(string $email): bool
     {
         $query = "SELECT COUNT(*) as count FROM users WHERE email = :email";
@@ -167,7 +161,6 @@ class UserRepository
         return $result['count'] > 0;
     }
 
-    // НОВЫЙ МЕТОД: Получить всех пользователей (для админки)
     public function findAll(int $limit = 100, int $offset = 0): array
     {
         $query = "SELECT * FROM users ORDER BY created_at DESC LIMIT :limit OFFSET :offset";

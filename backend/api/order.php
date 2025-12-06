@@ -1,7 +1,7 @@
 <?php
 ini_set('display_errors', 0);
 error_reporting(E_ALL);
-
+date_default_timezone_set('Europe/Kiev');
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST, GET, OPTIONS');
@@ -35,7 +35,6 @@ try {
     if ($action === 'create') {
         $controller->create($data);
     } elseif ($action === 'getHistory') {
-        // Ось цей маршрут потрібен для історії користувача
         $controller->getHistory($data);
     } elseif ($action === 'getAll') {
         $controller->getAll($data);

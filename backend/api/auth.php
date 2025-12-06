@@ -1,7 +1,7 @@
 <?php
 ini_set('display_errors', 0);
 error_reporting(E_ALL);
-
+date_default_timezone_set('Europe/Kiev');
 register_shutdown_function(function() {
     $error = error_get_last();
     if ($error !== null && in_array($error['type'], [E_ERROR, E_PARSE, E_CORE_ERROR, E_COMPILE_ERROR])) {
@@ -50,9 +50,9 @@ try {
         $controller->login($data);
     } elseif ($action === 'update') {
         $controller->update($data);
-    } elseif ($action === 'getProfile') { // Отримати свіжі дані
+    } elseif ($action === 'getProfile') {
         $controller->getProfile($data);
-    } elseif ($action === 'saveAddress') { // Зберегти адресу
+    } elseif ($action === 'saveAddress') {
         $controller->saveAddress($data);
     } else {
         echo json_encode(['success' => false, 'message' => 'Невідома дія (action).']);

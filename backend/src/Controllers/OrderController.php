@@ -61,7 +61,6 @@ class OrderController
         echo json_encode($orderResult);
     }
 
-    // --- ОТРИМАННЯ ІСТОРІЇ (ДЛЯ ЮЗЕРА) ---
     public function getHistory(array $data)
     {
         $email = $data['email'] ?? '';
@@ -78,11 +77,9 @@ class OrderController
             return;
         }
 
-        // Повертаємо замовлення цього користувача
         echo json_encode($this->orderService->getUserOrders($user->id));
     }
 
-    // --- АДМІНСЬКІ МЕТОДИ ---
     public function getAll(array $data)
     {
         if (!$this->isAdmin($data['admin_email'] ?? '')) {

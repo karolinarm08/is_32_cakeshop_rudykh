@@ -14,9 +14,6 @@ class ImageRepository
         $this->db = $db;
     }
 
-    /**
-     * Отримує всі шляхи до зображень для конкретного продукту.
-     */
     public function findImagesByProductId(int $productId): array
     {
         try {
@@ -29,9 +26,6 @@ class ImageRepository
         }
     }
 
-    /**
-     * Зберігає нові зображення (додає до існуючих).
-     */
     public function saveProductImagePaths(int $productId, array $paths): bool
     {
         if (empty($paths)) {
@@ -63,22 +57,16 @@ class ImageRepository
         }
     }
 
-    /**
-     * Видаляє конкретне зображення за його URL.
-     */
     public function deleteByUrl(string $imageUrl): bool
     {
         try {
-            // 1. Видаляємо з БД
             $stmt = $this->db->prepare("DELETE FROM product_images WHERE image_url = ?");
             $stmt->execute([$imageUrl]);
 
-            // 2. Видаляємо фізичний файл з сервера
-            // Шлях відносно кореня проекту (де лежить папка uploads)
             $filePath = dirname(__DIR__, 3) . '/' . $imageUrl;
             
             if (file_exists($filePath)) {
-                unlink($filePath); // Видалення файлу
+                unlink($filePath); 
             }
 
             return true;
