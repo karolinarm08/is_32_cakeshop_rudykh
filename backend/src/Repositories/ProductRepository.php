@@ -18,7 +18,7 @@ class ProductRepository
         $host = 'sql100.infinityfree.com';      // Наприклад: 'localhost' або IP хостингу
         $dbName = 'if0_40472805_cakeshop';      // Назва вашої бази даних
         $user = 'if0_40472805';      // Ім'я користувача бази даних
-        $pass = 'dcmRXnx3yUO78';      // MySQL Password
+        $pass = 'dcmRXnx3yUO78';     // MySQL Password
         // -----------------------------------------------------
 
         try {
@@ -108,14 +108,8 @@ class ProductRepository
     
     // --- ДОДАТКОВІ МЕТОДИ ДЛЯ getProductById ---
     
-    /**
-     * Заглушка: Отримує деталі продукту (склад, термін, алергени).
-     * У реальному проекті це може бути окрема таблиця або поля в `products`.
-     */
     public function findAdditionalDetails(int $id): array
     {
-        // Це заглушка, оскільки ви не надали схему БД для додаткових полів
-        // Повертаємо тестові дані для коректного заповнення product.html
         return [
             'storage_time' => '2 доби',
             'storage_conditions' => '(6±2) °С при вологості не більше 75%',
@@ -126,36 +120,27 @@ class ProductRepository
         ];
     }
 
-    /**
-     * Заглушка: Отримує відгуки для продукту.
-     */
     public function findReviewsByProductId(int $id): array
     {
-        // Повертаємо тестові відгуки
         return [
             ['user' => 'Олена К.', 'rating' => 5, 'text' => 'Торт "Ягідна ніжність" просто неперевершений! Свіжий та ідеально солодкий.'],
             ['user' => 'Петро М.', 'rating' => 4, 'text' => 'Дуже смачно, але доставка затрималася на годину.'],
         ];
     }
     
-    /**
-     * Заглушка: Отримує рекомендовані товари.
-     */
     public function findRecommendedProducts(int $limit): array
     {
-        // Повертаємо тестові дані для карток рекомендованих товарів
-        return [
-            ['id' => 10, 'name' => 'Еклер Шоколад', 'description' => 'Класичний смак', 'price' => 100, 'weight' => 0.1, 'main_image' => 'uploads/eclair.jpg'],
-            ['id' => 11, 'name' => 'Тістечко Манго', 'description' => 'Тропічний мус', 'price' => 120, 'weight' => 0.2, 'main_image' => 'uploads/mango.jpg'],
-            ['id' => 12, 'name' => 'Торт Трюфель', 'description' => 'Насичений шоколад', 'price' => 900, 'weight' => 1.0, 'main_image' => 'uploads/truffle.jpg'],
-            ['id' => 13, 'name' => 'Макарон Фісташка', 'description' => 'Мигдальне печиво', 'price' => 50, 'weight' => 0.05, 'main_image' => 'uploads/macaron.jpg'],
-        ];
+        // Для спрощення повертаємо випадкові 3 товари з БД
+        try {
+            $stmt = $this->db->query("SELECT p.*, (SELECT image_url FROM product_images WHERE product_id = p.id LIMIT 1) as main_image FROM products p WHERE is_active = 1 ORDER BY RAND() LIMIT 3");
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            return [];
+        }
     }
 
     /**
      * Зберігає новий продукт у базі даних.
-     * @param Product $product
-     * @return bool
      */
     public function save(Product $product): bool
     {
@@ -182,6 +167,59 @@ class ProductRepository
 
         } catch (PDOException $e) {
             error_log("SQL Error on Product Save: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Оновлює існуючий продукт.
+     */
+    public function update(Product $product): bool
+    {
+        try {
+            $sql = "UPDATE products 
+                    SET category_id = :category_id, 
+                        name = :name, 
+                        description = :description, 
+                        price = :price, 
+                        weight = :weight, 
+                        is_active = :is_active 
+                    WHERE id = :id";
+            
+            $stmt = $this->db->prepare($sql);
+            
+            return $stmt->execute([
+                ':category_id' => $product->categoryId,
+                ':name' => $product->name,
+                ':description' => $product->description,
+                ':price' => $product->price,
+                ':weight' => $product->weight,
+                ':is_active' => $product->isActive ? 1 : 0,
+                ':id' => $product->id
+            ]);
+
+        } catch (PDOException $e) {
+            error_log("SQL Error on Product Update: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Видаляє продукт за ID.
+     */
+    public function delete(int $id): bool
+    {
+        try {
+            // Спочатку видаляємо пов'язані зображення (якщо немає каскадного видалення в БД)
+            $stmtImg = $this->db->prepare("DELETE FROM product_images WHERE product_id = ?");
+            $stmtImg->execute([$id]);
+
+            // Видаляємо сам продукт
+            $stmt = $this->db->prepare("DELETE FROM products WHERE id = ?");
+            return $stmt->execute([$id]);
+
+        } catch (PDOException $e) {
+            error_log("SQL Error on Product Delete: " . $e->getMessage());
             return false;
         }
     }

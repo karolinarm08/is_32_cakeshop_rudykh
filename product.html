@@ -10,7 +10,6 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="icon" type="image/x-icon" href="./image/favicon.ico">
-    <!-- Додано ID для динамічної назви сторінки -->
     <title id="productTitle">*</title>
 </head>
 <body>
@@ -44,9 +43,7 @@
     <div id="loadingOverlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.9); z-index: 1000; display: none; justify-content: center; align-items: center; flex-direction: column; color: #4A148C; font-size: 1.5rem;">
         <i class="fa fa-spinner fa-spin text-4xl mb-4"></i>
         <span>Завантаження...</span>
-        <!-- Додаємо елемент для виводу помилки на екран -->
         <p id="errorDisplay" style="color: red; font-size: 0.8em; margin-top: 10px; display: none; text-align: center; max-width: 90%;"></p>
-        <!-- Додаємо елемент для виводу повідомлень про успіх/помилку кошика -->
         <div id="cartMessage" style="color: #4CAF50; font-size: 1em; margin-top: 10px; display: none; text-align: center; max-width: 90%; padding: 10px; border: 1px solid; border-radius: 5px;"></div>
     </div>
     
@@ -59,74 +56,54 @@
                 <img src="./image/Arrow 1.svg" alt="Повернутись">
                 <p>повернутись</p>
             </a>
-            <div class="change-buttons">
-                <button class="change-button">Редагувати</button>
-                <button class="change-button">Видалити</button>
+            <!-- Кнопки адміністратора (приховані за замовчуванням) -->
+            <div class="change-buttons" id="adminButtons" style="display: none;">
+                <button class="change-button" id="btnEdit">Редагувати</button>
+                <button class="change-button" id="btnDelete" style="border-color: red; color: red;">Видалити</button>
             </div>
         </div>
         <section class="product">
             <div class="product-images">
-                <!-- Додано ID для динамічного оновлення -->
-                <img id="selectedImage" src="./image/image 1 5.png" alt="Selected Cake" onerror="this.src='./image/placeholder.png';">
+                <img id="selectedImage" src="./image/placeholder.png" alt="Selected Cake" onerror="this.src='./image/placeholder.png';">
                 
                 <div class="thumbnail-row-wrapper">
-                    <!-- Додано ID для динамічного оновлення мініатюр -->
                     <div class="thumbnail-row" id="thumbnailRow">
-                        <!-- Динамічно заповнюється JS -->
                     </div>
                 </div>
             </div>
             <div class="product-descr">
-
-                <!-- Додано ID для динамічного оновлення -->
                 <h1 class="section-title" id="productName">Завантаження...</h1>
-                <!-- Додано ID для динамічного оновлення -->
-                <p class="product-text" id="productDescription">
-                    Завантаження опису...
-                </p>
-                <!-- Додано ID для динамічного оновлення -->
+                <p class="product-text" id="productDescription">Завантаження опису...</p>
                 <select class="product-weight-form" id="productWeightSelect">
                     <option value="">1 кг</option>
                 </select>
 
-                <!-- ДОДАНО: Поле для введення кількості -->
                 <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
                     <label for="productQuantityInput" class="product-text" style="margin-bottom: 0;">Кількість:</label>
                     <input type="number" id="productQuantityInput" value="1" min="1" class="product-quantity-input" style="width: 80px; padding: 5px; border: 1px solid #ccc; border-radius: 5px;">
                 </div>
-                <!-- КІНЕЦЬ ДОДАНО -->
 
-                <!-- Додано ID для динамічного оновлення -->
                 <span class="product-price" id="productPrice">0 грн</span>
                 
-                <!-- Додано ID для обробки події -->
                 <button class="product-add" id="addToCartButton">У кошик</button>
             </div>
 
         </section>
-        <!-- Доп инф -->
         <section class="product-additional-info">
             <h1 class="section-title">Додаткова інформація</h1>
-            <!-- Додано ID для динамічного оновлення -->
             <p class="product-text" id="additionalInfoText">
                 Завантаження додаткової інформації...
             </p>
         </section>
-        <!-- Рекомендовані -->
         <section class="product-recommended">
             <h1 class="section-title">Рекомендовані</h1>
-            <!-- Додано ID для динамічного оновлення -->
             <div class="cards-container" id="recommendedProducts">
-                <!-- Динамічно заповнюється JS -->
             </div>
         </section>
-        <!-- Відгуки -->
         <section class="product-reviews">
             <img src="./image/waves_3.png" width="100%" alt="волны">
             <h2 class="section-title">Відгуки</h2>
-            <!-- Додано ID для динамічного оновлення -->
             <div class="cards-container" id="reviewsContainer">
-                <!-- Динамічно заповнюється JS -->
             </div>
         </section>
     </div>
@@ -134,12 +111,8 @@
 <div id="footer"></div>
 
 <script>
-    
-    // --- Допоміжні функції для динамічного завантаження ---
-
     function getProductIdFromUrl() {
         const urlParams = new URLSearchParams(window.location.search);
-        // Якщо ID немає в URL, повертаємо 1 для тесту (або null для реального продакшену)
         return urlParams.get('id') || 1;
     }
 
@@ -183,180 +156,194 @@
         document.getElementById('recommendedProducts').appendChild(div.firstChild);
     }
 
-    // Допоміжна функція для відображення повідомлень (заміна alert)
     function showMessage(text, isSuccess) {
         const cartMessageDiv = document.getElementById('cartMessage');
         const loadingOverlay = document.getElementById('loadingOverlay');
         
         cartMessageDiv.textContent = text;
-        cartMessageDiv.style.color = isSuccess ? '#2e7d32' : '#d32f2f'; // Зелений або червоний
+        cartMessageDiv.style.color = isSuccess ? '#2e7d32' : '#d32f2f';
         cartMessageDiv.style.borderColor = isSuccess ? '#a5d6a7' : '#ef9a9a';
         cartMessageDiv.style.display = 'block';
-        loadingOverlay.style.display = 'flex'; // Показуємо оверлей з повідомленням
+        loadingOverlay.style.display = 'flex'; 
 
-        // Приховуємо повідомлення через 3 секунди
         setTimeout(() => {
             cartMessageDiv.style.display = 'none';
-            // Якщо немає помилки завантаження даних, ховаємо оверлей
             if (document.getElementById('errorDisplay').style.display === 'none') {
                  loadingOverlay.style.display = 'none';
             }
         }, 3000);
     }
 
+    // --- ФУНКЦІЇ АДМІНІСТРАТОРА ---
+    function checkAdminAccess() {
+        const userDataStr = localStorage.getItem('user_data');
+        if (userDataStr) {
+            const user = JSON.parse(userDataStr);
+            if (user.role === 'admin') {
+                document.getElementById('adminButtons').style.display = 'flex';
+                
+                const productId = getProductIdFromUrl();
+                
+                // Клік на Редагувати
+                document.getElementById('btnEdit').onclick = () => {
+                    window.location.href = `product_change.html?id=${productId}`;
+                };
+                
+                // Клік на Видалити
+                document.getElementById('btnDelete').onclick = () => {
+                    if (confirm('Ви впевнені, що хочете видалити цей товар назавжди?')) {
+                        deleteProduct(productId);
+                    }
+                };
+            }
+        }
+    }
 
-    // --- ОСНОВНА ФУНКЦІЯ: Завантаження даних продукту з PHP API ---
+    async function deleteProduct(id) {
+        let apiPath = '/backend/product_api.php?action=delete';
+        if (window.location.pathname.includes('/frontend/')) {
+             apiPath = '../backend/product_api.php?action=delete';
+        }
+
+        try {
+            const response = await fetch(apiPath, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id: id })
+            });
+            const data = await response.json();
+            
+            if (data.success) {
+                alert('Товар успішно видалено!');
+                window.location.href = 'menu.html';
+            } else {
+                alert('Помилка: ' + data.message);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Помилка з\'єднання з сервером.');
+        }
+    }
 
     async function fetchProductDetails(productId) {
         const loadingOverlay = document.getElementById('loadingOverlay');
-        const errorDisplay = document.getElementById('errorDisplay');
         
-        if (!productId) {
-            // Якщо немає ID, можна не показувати помилку, а просто завантажити заглушку
-            // або показати критичну помилку
-            return;
-        }
-
-        // --- Налаштування шляху до API Продуктів ---
-        let apiPath = '../backend/api/products.php?action=getOne&id=' + productId;
-        if (!window.location.pathname.includes('/frontend/')) {
-             apiPath = 'backend/api/products.php?action=getOne&id=' + productId;
+        let apiPath = '/backend/product_api.php?action=get&id=' + productId;
+        if (window.location.pathname.includes('/frontend/')) {
+             apiPath = '../backend/product_api.php?action=get&id=' + productId;
         }
 
         try {
             const response = await fetch(apiPath);
-            
-            if (!response.ok) {
-                // Якщо 404 - значить файл API ще не створено, ігноруємо помилку, щоб не лякати юзера
-                if (response.status === 404) {
-                    console.warn("API products.php не знайдено. Використовуються демо-дані.");
-                    return; 
-                }
-                const errorText = await response.text(); 
-                throw new Error(`Помилка мережі: HTTP Status ${response.status}`);
-            }
-            
+            if (!response.ok) throw new Error(`HTTP Status ${response.status}`);
             const data = await response.json();
 
             if (data.success && data.product) {
                 const product = data.product;
 
-                // --- Заповнення сторінки ---
                 document.getElementById('productTitle').textContent = product.name || 'Продукт';
                 document.getElementById('productName').textContent = product.name || 'Назва продукту';
-                document.getElementById('productDescription').textContent = product.description || 'Детальний опис відсутній.';
+                document.getElementById('productDescription').textContent = product.description || '';
                 document.getElementById('productPrice').textContent = `${product.price || 0} грн`;
                 
-                const mainImage = product.main_image || './image/image 1 5.png'; // Дефолтна картинка
+                const mainImage = product.main_image || './image/image 1 5.png';
                 document.getElementById('selectedImage').src = mainImage;
 
                 const thumbnailRow = document.getElementById('thumbnailRow');
                 thumbnailRow.innerHTML = ''; 
                 
-                // Додаємо головне фото
-                createThumbnail(mainImage, product.name); 
-                
-                if (product.images_array && Array.isArray(product.images_array)) {
+                // Перевіряємо: якщо є масив фото, виводимо його
+                if (product.images_array && Array.isArray(product.images_array) && product.images_array.length > 0) {
                     product.images_array.forEach(img => createThumbnail(img, product.name));
+                } else {
+                    // Якщо масиву немає (або він порожній), тоді виводимо хоча б головне фото
+                    createThumbnail(mainImage, product.name); 
                 }
                 
-                // Вага
-                const weightSelect = document.getElementById('productWeightSelect');
-                weightSelect.innerHTML = `<option value="${product.weight || 1}">${product.weight || 1} кг</option>`;
+                document.getElementById('productWeightSelect').innerHTML = `<option value="${product.weight}">${product.weight} кг</option>`;
+                
+                // Додаткова інфа
+                const infoText = `
+                    <strong>Склад:</strong> ${product.ingredients || '-'}<br>
+                    <strong>Термін придатності:</strong> ${product.storage_time || '-'}<br>
+                    <strong>Умови зберігання:</strong> ${product.storage_conditions || '-'}
+                `;
+                document.getElementById('additionalInfoText').innerHTML = infoText;
+
+                // Рекомендовані
+                if (data.recommended_products) {
+                    data.recommended_products.forEach(p => createRecommendedCard(p));
+                }
 
             } else {
-                console.warn(data.message || 'Продукт не знайдено в базі даних.');
+                console.warn(data.message);
             }
 
         } catch (error) {
-            console.error("Помилка завантаження даних продукту (можливо API ще не налаштовано):", error);
-            // Не блокуємо інтерфейс, залишаємо статичні дані
+            console.error("Помилка:", error);
         }
     }
 
-    // --- НОВА ФУНКЦІЯ: Додавання товару в кошик ---
     async function handleAddToCart() {
         const productId = getProductIdFromUrl();
         const quantityInput = document.getElementById('productQuantityInput');
-        
-        // Перевірка кількості
         let quantity = parseInt(quantityInput.value);
         if (isNaN(quantity) || quantity <= 0) {
-            showMessage('Будь ласка, вкажіть валідну кількість (більше 0).', false);
+            showMessage('Вкажіть кількість > 0.', false);
             return;
         }
 
-        // --- 1. Перевірка авторизації (НОВЕ) ---
         const userDataStr = localStorage.getItem('user_data');
         if (!userDataStr) {
-            showMessage('Будь ласка, увійдіть в акаунт, щоб додавати товари.', false);
-            setTimeout(() => { 
-                // Якщо є модальне вікно в index.html, краще перенаправити туди або відкрити його
-                // Тут просто перенаправляємо на головну, де є кнопка входу
-                window.location.href = 'index.html'; 
-            }, 2000);
+            showMessage('Увійдіть в акаунт, щоб додати товар.', false);
+            setTimeout(() => { window.location.href = 'index.html'; }, 2000);
             return;
         }
         
         const userEmail = JSON.parse(userDataStr).email;
         
-        // Починаємо завантаження
         document.getElementById('loadingOverlay').style.display = 'flex';
         document.getElementById('errorDisplay').style.display = 'none';
         document.getElementById('cartMessage').style.display = 'none';
 
-        // --- 2. Налаштування URL до API Кошика (НОВЕ) ---
-        let apiPath = '../backend/api/cart.php?action=add';
-        if (!window.location.pathname.includes('/frontend/')) {
-             apiPath = 'backend/api/cart.php?action=add';
+        let apiPath = '/backend/api/cart.php?action=add';
+        if (window.location.pathname.includes('/frontend/')) {
+             apiPath = '../backend/api/cart.php?action=add';
         }
         
         try {
-            // --- 3. Відправка JSON (НОВЕ) ---
             const response = await fetch(apiPath, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     email: userEmail,
-                    productId: parseInt(productId), // Переконуємось, що це число
+                    productId: parseInt(productId),
                     quantity: quantity
                 })
             });
-
-            // Перевірка на HTML помилку (якщо шлях неправильний)
-            const contentType = response.headers.get("content-type");
-            if (!contentType || !contentType.includes("application/json")) {
-                throw new Error("Сервер повернув не JSON. Перевірте шлях до API.");
-            }
 
             const data = await response.json();
 
             if (data.success) {
                 showMessage(`✅ Товар додано до кошика!`, true);
             } else {
-                showMessage(`❌ Помилка: ${data.message || 'Невідома помилка.'}`, false);
+                showMessage(`❌ Помилка: ${data.message}`, false);
             }
         } catch (error) {
-            showMessage('Помилка з\'єднання з сервером. Спробуйте пізніше.', false);
-            console.error('Помилка fetch:', error);
+            showMessage('Помилка з\'єднання.', false);
         }
     }
 
-
     document.addEventListener('DOMContentLoaded', () => {
         const productId = getProductIdFromUrl();
-        // Спробуємо завантажити деталі, якщо API налаштовано
         fetchProductDetails(productId);
+        checkAdminAccess(); // Перевірка прав
         
-        // --- Підключення обробника події до кнопки ---
         const addToCartButton = document.getElementById('addToCartButton');
         if (addToCartButton) {
             addToCartButton.addEventListener('click', handleAddToCart);
         }
     });
-
 </script>
 </body>
 </html>

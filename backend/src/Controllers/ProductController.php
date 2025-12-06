@@ -17,97 +17,10 @@ class ProductController
         $this->imageRepository = new ImageRepository($this->productRepository->db);
     }
 
-    /**
-     * Отримує всі активні товари та їхні зображення для відображення в меню.
-     * @return void
-     */
-    public function getAllProducts(): void
-    {
-        $products = $this->productRepository->findAllActive();
-        $responseProducts = [];
-
-        foreach ($products as $product) {
-            // Отримуємо зображення для кожного продукту
-            $images = $this->imageRepository->findImagesByProductId($product->id);
-            
-            // Форматуємо дані для відправки у JSON
-            $responseProducts[] = [
-                'id' => $product->id,
-                'name' => $product->name,
-                'description' => $product->description,
-                'price' => $product->price,
-                'weight' => $product->weight,
-                'category_id' => $product->categoryId,
-                'images' => $images,
-                // Головне зображення або заглушка, якщо зображень немає
-                'main_image' => $images[0] ?? './image/placeholder.png' 
-            ];
-        }
-
-        // Надсилаємо відповідь у форматі JSON
-        header('Content-Type: application/json');
-        echo json_encode(['success' => true, 'products' => $responseProducts]);
-        exit();
-    }
+    // --- ДОПОМІЖНІ МЕТОДИ ДЛЯ ФОТО ---
 
     /**
-     * Отримання товару за ID. Виводить JSON.
-     * @param int $id
-     * @return void
-     */
-    public function getProductById(int $id): void
-    {
-        $product = $this->productRepository->findById($id);
-
-        if (!$product) {
-            http_response_code(404);
-            echo json_encode(['success' => false, 'message' => 'Товар з таким ID не знайдено.']);
-            exit();
-        }
-
-        // 1. Отримуємо всі зображення
-        $images = $this->imageRepository->findImagesByProductId($product->id);
-        
-        // 2. Отримуємо додаткові дані (наприклад, відгуки, рекомендовані)
-        // (Ця логіка має бути реалізована у відповідних репозиторіях, але тут ми використовуємо заглушки для прикладу)
-        $reviews = $this->productRepository->findReviewsByProductId($product->id);
-        $recommended = $this->productRepository->findRecommendedProducts(3); // Припускаємо, що такий метод існує
-        $productDetails = $this->productRepository->findAdditionalDetails($product->id); // Наприклад, склад, терміни
-
-        // 3. Форматуємо відповідь
-        $responseData = [
-            'success' => true,
-            'product' => [
-                'id' => $product->id,
-                'name' => $product->name,
-                'description' => $product->description,
-                'price' => $product->price,
-                'weight' => $product->weight,
-                'category_id' => $product->categoryId,
-                // Поля для динамічного заповнення additionalInfoText
-                'storage_time' => $productDetails['storage_time'] ?? '2 доби',
-                'storage_conditions' => $productDetails['storage_conditions'] ?? '(6±2) °С',
-                'ingredients' => $productDetails['ingredients'] ?? 'Ванільний бісквіт, крем, конфітюр.',
-                'allergens' => $productDetails['allergens'] ?? 'Яйця, пшениця.',
-                'size' => $productDetails['size'] ?? '20*20*40 см.',
-                'packaging' => $productDetails['packaging'] ?? 'Брендована упаковка.',
-                // Зображення
-                'main_image' => $images[0] ?? './image/placeholder.png',
-                'images_array' => array_slice($images, 1), // Решта зображень як мініатюри
-            ],
-            'reviews' => $reviews,
-            'recommended_products' => $recommended
-        ];
-        
-        header('Content-Type: application/json');
-        echo json_encode($responseData);
-        exit();
-    }
-
-    /**
-     * Нормалізує масив $_FILES для зручної ітерації при множинному завантаженні.
-     * @param array $files Масив $_FILES['images']
-     * @return array Нормалізований масив файлів
+     * Перетворює складний масив $_FILES в зручний формат.
      */
     private function reArrayFiles(array $files): array
     {
@@ -128,95 +41,221 @@ class ProductController
         return $file_ary;
     }
 
-
     /**
-     * Обробляє запит на створення нового товару.
-     * @param array $data Дані нового товару з $_POST.
-     * @return array Результат операції (успіх/помилка).
+     * Завантажує файли на сервер і повертає масив шляхів.
      */
-    public function createProduct(array $data): array
+    private function handleImageUploads(): array 
     {
-        // 1. Валідація даних
-        if (empty($data['name']) || empty($data['price']) || empty($data['category_id']) || empty($data['weight'])) {
-            return ['success' => false, 'message' => 'Помилка валідації. Відсутні обов\'язкові поля (Назва, Ціна, Категорія, Вага).'];
-        }
-        if (!is_numeric($data['price']) || !is_numeric($data['weight'])) {
-            return ['success' => false, 'message' => 'Поля Ціна та Вага повинні бути числами.'];
-        }
-        
-        // 2. Обробка завантаження файлів зображень
         $uploadedFilePaths = [];
         
+        // Перевіряємо, чи є файли у запиті
         if (!empty($_FILES['images'])) {
             $imageFiles = $this->reArrayFiles($_FILES['images']);
             
-            // Шлях для збереження файлів у нову папку 'uploads/'
+            // Шлях до папки uploads (на 3 рівні вище від Controllers)
             $uploadDir = dirname(__DIR__, 3) . '/uploads/'; 
             
-            // Перевірка та СТВОРЕННЯ ПАПКИ (з правами 0777, які запитає PHP)
+            // Створюємо папку, якщо немає
             if (!is_dir($uploadDir)) {
-                if (!mkdir($uploadDir, 0777, true)) {
-                     return ['success' => false, 'message' => 'Помилка: Сервер блокує створення папки "uploads" для запису файлів.'];
-                }
+                mkdir($uploadDir, 0777, true);
             }
 
             foreach ($imageFiles as $file) {
+                // Перевірка на помилки та тип файлу
                 if ($file['error'] === UPLOAD_ERR_OK && $file['size'] > 0 && strpos($file['type'], 'image/') === 0) {
                     
-                    $fileExtension = pathinfo($file['name'], PATHINFO_EXTENSION);
-                    $baseName = pathinfo($file['name'], PATHINFO_FILENAME);
-                    $safeBaseName = preg_replace('/[^a-zA-Z0-9_\-]/', '_', $baseName);
-                    
-                    $fileName = time() . '_' . uniqid() . '_' . $safeBaseName . '.' . $fileExtension;
+                    $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
+                    // Генеруємо унікальне ім'я
+                    $fileName = time() . '_' . uniqid() . '.' . $ext;
                     $targetPath = $uploadDir . $fileName;
 
                     if (move_uploaded_file($file['tmp_name'], $targetPath)) {
+                        // Зберігаємо відносний шлях для БД
                         $uploadedFilePaths[] = 'uploads/' . $fileName; 
-                    } else {
-                        error_log("Помилка переміщення файлу: " . $file['name'] . " до " . $targetPath);
-                        return ['success' => false, 'message' => 'Помилка: Не вдалося перемістити завантажений файл. Перевірте, чи не заблокована папка "uploads".'];
                     }
                 }
             }
         }
+        return $uploadedFilePaths;
+    }
+
+    // --- ОСНОВНІ МЕТОДИ API ---
+
+    public function getAllProducts(): void
+    {
+        $products = $this->productRepository->findAllActive();
+        $responseProducts = [];
+
+        foreach ($products as $product) {
+            $images = $this->imageRepository->findImagesByProductId($product->id);
+            $responseProducts[] = [
+                'id' => $product->id,
+                'name' => $product->name,
+                'description' => $product->description,
+                'price' => $product->price,
+                'weight' => $product->weight,
+                'category_id' => $product->categoryId,
+                'images' => $images,
+                'main_image' => $images[0] ?? './image/placeholder.png' 
+            ];
+        }
+
+        echo json_encode(['success' => true, 'products' => $responseProducts]);
+    }
+
+    public function getProductById(int $id): void
+    {
+        $product = $this->productRepository->findById($id);
+
+        if (!$product) {
+            http_response_code(404);
+            echo json_encode(['success' => false, 'message' => 'Товар не знайдено.']);
+            exit();
+        }
+
+        $images = $this->imageRepository->findImagesByProductId($product->id);
+        $productDetails = $this->productRepository->findAdditionalDetails($product->id);
+
+        $responseData = [
+            'success' => true,
+            'product' => [
+                'id' => $product->id,
+                'name' => $product->name,
+                'description' => $product->description,
+                'price' => $product->price,
+                'weight' => $product->weight,
+                'category_id' => $product->categoryId,
+                'is_active' => $product->isActive ? 1 : 0,
+                'main_image' => $images[0] ?? './image/placeholder.png',
+                'images_array' => $images, 
+                // Додаткові поля
+                'storage_time' => $productDetails['storage_time'] ?? '',
+                'storage_conditions' => $productDetails['storage_conditions'] ?? '',
+                'ingredients' => $productDetails['ingredients'] ?? '',
+                'allergens' => $productDetails['allergens'] ?? '',
+            ]
+        ];
         
-        // 3. Збереження моделі Product
+        echo json_encode($responseData);
+    }
+
+    /**
+     * Створення нового товару (ПОВНІСТЮ ВИПРАВЛЕНО)
+     */
+    public function createProduct(array $data): array
+    {
+        // 1. Валідація
+        if (empty($data['name']) || empty($data['price']) || empty($data['category_id'])) {
+            return ['success' => false, 'message' => 'Заповніть обов\'язкові поля (Назва, Ціна, Категорія).'];
+        }
+        
+        // 2. Завантаження фото
+        $uploadedFilePaths = $this->handleImageUploads();
+        
         try {
+            // 3. Створення моделі
             $newProduct = new Product(
                 $data['name'],
                 (float)$data['price'],
                 $data['description'] ?? '',
-                (float)$data['weight'],
+                (float)$data['weight'] ?? 1.0,
                 (int)$data['category_id'],
                 ($data['is_active'] ?? '1') === '1'
             );
 
+            // 4. Збереження товару в БД
             $success = $this->productRepository->save($newProduct);
 
             if ($success) {
-                // 4. Зберігаємо шляхи до зображень у таблицю product_images
+                // 5. Прив'язка фото до нового ID товару
                 if (!empty($uploadedFilePaths)) {
-                    $imageSuccess = $this->imageRepository->saveProductImagePaths($newProduct->id, $uploadedFilePaths);
-                    
-                    if (!$imageSuccess) {
-                        error_log("Помилка: Не вдалося зберегти шляхи до зображень у БД для ID: {$newProduct->id}");
-                        return ['success' => true, 'message' => "Товар збережено, але сталася помилка при збереженні шляхів до зображень у БД."];
-                    }
+                    $this->imageRepository->saveProductImagePaths($newProduct->id, $uploadedFilePaths);
                 }
                 
                 return [
                     'success' => true, 
-                    'message' => "Товар та його зображення успішно збережено (ID: {$newProduct->id}).",
-                    'product_id' => $newProduct->id,
-                    'image_paths' => $uploadedFilePaths 
+                    'message' => "Товар успішно створено (ID: {$newProduct->id}).",
+                    'product_id' => $newProduct->id
                 ];
             } else {
                 return ['success' => false, 'message' => 'Помилка збереження товару в базі даних.'];
             }
 
         } catch (\Exception $e) {
-            error_log("Помилка: " . $e->getMessage());
-            return ['success' => false, 'message' => "Неочікувана помилка при створенні товару."];
+            return ['success' => false, 'message' => "Помилка сервера: " . $e->getMessage()];
+        }
+    }
+
+    /**
+     * Оновлення товару (ПОВНІСТЮ ВИПРАВЛЕНО)
+     */
+    public function updateProduct(array $data): array
+    {
+        if (empty($data['product_id']) || empty($data['name'])) {
+            return ['success' => false, 'message' => 'ID товару та назва обов\'язкові.'];
+        }
+
+        // 1. Завантаження НОВИХ фото
+        $uploadedFilePaths = $this->handleImageUploads();
+
+        try {
+            $product = new Product(
+                $data['name'],
+                (float)$data['price'],
+                $data['description'] ?? '',
+                (float)$data['weight'] ?? 1.0,
+                (int)$data['category_id'],
+                ($data['is_active'] ?? '1') === '1',
+                (int)$data['product_id']
+            );
+
+            // 2. Оновлення даних про товар
+            $success = $this->productRepository->update($product);
+
+            if ($success) {
+                // 3. Додавання НОВИХ фото до БД (старі не чіпаємо, вони видаляються окремим методом)
+                if (!empty($uploadedFilePaths)) {
+                    $this->imageRepository->saveProductImagePaths($product->id, $uploadedFilePaths);
+                }
+                return ['success' => true, 'message' => "Товар успішно оновлено."];
+            } else {
+                return ['success' => false, 'message' => 'Помилка оновлення в БД.'];
+            }
+
+        } catch (\Exception $e) {
+            return ['success' => false, 'message' => "Помилка: " . $e->getMessage()];
+        }
+    }
+
+    /**
+     * Видалення товару
+     */
+    public function deleteProduct(int $id): array
+    {
+        if ($id <= 0) return ['success' => false, 'message' => 'Невірний ID.'];
+
+        if ($this->productRepository->delete($id)) {
+            return ['success' => true, 'message' => 'Товар видалено.'];
+        }
+        return ['success' => false, 'message' => 'Помилка видалення.'];
+    }
+
+    /**
+     * Видалення окремого фото (Викликається при натисканні хрестика)
+     */
+    public function deleteImage(array $data): void
+    {
+        $imageUrl = $data['image_url'] ?? '';
+        
+        if (empty($imageUrl)) {
+            echo json_encode(['success' => false, 'message' => 'URL зображення відсутній.']);
+            exit();
+        }
+
+        if ($this->imageRepository->deleteByUrl($imageUrl)) {
+            echo json_encode(['success' => true, 'message' => 'Фото видалено.']);
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Не вдалося видалити фото з БД або сервера.']);
         }
     }
 }

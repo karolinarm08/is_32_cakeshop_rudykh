@@ -20,13 +20,10 @@ class OrderController
         $this->cartService = new CartService();
     }
 
-    // Створення замовлення (для всіх)
     public function create(array $data)
     {
         $email = $data['email'] ?? '';
-        if (empty($email)) {
-            echo json_encode(['success' => false, 'message' => 'Необхідна авторизація']); return;
-        }
+        if (empty($email)) { echo json_encode(['success' => false, 'message' => 'Необхідна авторизація']); return; }
 
         $cartResult = $this->cartService->getUserCart($email);
         if (!$cartResult['success'] || empty($cartResult['items'])) {
@@ -35,9 +32,7 @@ class OrderController
 
         $userRepository = new UserRepository();
         $user = $userRepository->findByEmail($email);
-        if (!$user) {
-            echo json_encode(['success' => false, 'message' => 'Користувача не знайдено']); return;
-        }
+        if (!$user) { echo json_encode(['success' => false, 'message' => 'Користувача не знайдено']); return; }
 
         $addressId = null;
         if (isset($data['deliveryAddress'])) {
@@ -66,41 +61,46 @@ class OrderController
         echo json_encode($orderResult);
     }
 
-    // --- АДМІНСЬКІ МЕТОДИ ---
-
-    // Отримати всі замовлення
-    public function getAll(array $data)
+    // --- ОТРИМАННЯ ІСТОРІЇ (ДЛЯ ЮЗЕРА) ---
+    public function getHistory(array $data)
     {
-        // Перевірка прав адміна
-        if (!$this->isAdmin($data['admin_email'] ?? '')) {
-            echo json_encode(['success' => false, 'message' => 'Доступ заборонено. Тільки для адміністраторів.']);
+        $email = $data['email'] ?? '';
+        if (empty($email)) {
+            echo json_encode(['success' => false, 'message' => 'Необхідна авторизація (email missing)']);
             return;
         }
 
+        $userRepository = new UserRepository();
+        $user = $userRepository->findByEmail($email);
+        
+        if (!$user) {
+            echo json_encode(['success' => false, 'message' => 'Користувача не знайдено в базі']);
+            return;
+        }
+
+        // Повертаємо замовлення цього користувача
+        echo json_encode($this->orderService->getUserOrders($user->id));
+    }
+
+    // --- АДМІНСЬКІ МЕТОДИ ---
+    public function getAll(array $data)
+    {
+        if (!$this->isAdmin($data['admin_email'] ?? '')) {
+            echo json_encode(['success' => false, 'message' => 'Доступ заборонено.']); return;
+        }
         echo json_encode($this->orderService->getAllOrders());
     }
 
-    // Змінити статус замовлення
     public function updateStatus(array $data)
     {
-        // Перевірка прав адміна
         if (!$this->isAdmin($data['admin_email'] ?? '')) {
-            echo json_encode(['success' => false, 'message' => 'Доступ заборонено.']);
-            return;
+            echo json_encode(['success' => false, 'message' => 'Доступ заборонено.']); return;
         }
-
         $orderId = $data['order_id'] ?? 0;
         $status = $data['status'] ?? '';
-        
-        if ($orderId <= 0 || empty($status)) {
-            echo json_encode(['success' => false, 'message' => 'Некоректні дані']);
-            return;
-        }
-
         echo json_encode($this->orderService->changeStatus((int)$orderId, $status));
     }
 
-    // Допоміжна функція перевірки адміна
     private function isAdmin(string $email): bool
     {
         if (empty($email)) return false;

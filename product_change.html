@@ -3,219 +3,91 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Schoolbell&display=swap" rel="stylesheet">
+    <title id="pageTitle">Редагування товару</title>
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link rel="icon" type="image/x-icon" href="./image/favicon.ico">
-    <title>Додавання/Редагування товару</title>
     <style>
-        /* Стилі для цієї сторінки */
+        /* Стилі для форми */
         .add-product-form {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            max-width: 800px;
-            margin: 0 auto 50px auto;
-            padding: 20px;
-            border: 1px solid var(--color-grey-light);
-            border-radius: var(--card-border);
-            box-shadow: 0px 0px 21px 6px rgba(116, 116, 116, 0.1);
+            display: flex; flex-direction: column; gap: 20px; max-width: 800px;
+            margin: 20px auto; padding: 20px; border: 1px solid var(--color-grey-light);
+            border-radius: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         }
-
-        .form-group {
-            display: flex;
-            flex-direction: column;
+        .form-row { display: flex; gap: 20px; }
+        .form-row.full-width > .form-group { flex-basis: 100%; }
+        .form-group { display: flex; flex-direction: column; flex: 1; }
+        .form-group label { font-weight: 600; margin-bottom: 5px; color: #7F4B93; }
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%; padding: 10px; border: 1px solid #747474;
+            border-radius: 10px; font-size: 16px; box-sizing: border-box;
         }
-
-        .form-row {
-            display: flex;
-            gap: 20px;
-        }
-
-        .form-row > .form-group {
-            flex-basis: 50%;
-        }
-
-        .form-row.full-width > .form-group {
-            flex-basis: 100%;
-        }
-
-        .form-group label {
-            font-weight: 600;
-            margin-bottom: 5px;
-            color: var(--color-purple);
-        }
-
-        .form-group input[type="text"],
-        .form-group input[type="number"],
-        .form-group textarea,
-        .form-group select {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid var(--color-grey-dark);
-            border-radius: var(--button-border);
-            font-size: 16px;
-            resize: vertical;
-        }
+        .btn-submit { background-color: #7F4B93; color: white; border: none; cursor: pointer; padding: 12px 20px; border-radius: 10px; font-weight: bold; }
+        .btn-submit:disabled { background-color: #ccc; cursor: not-allowed; }
         
-        .form-group input[type="file"] {
-            padding: 10px 0;
-        }
-
-        .form-group textarea {
-            min-height: 100px;
-        }
-
-        .form-actions {
-            display: flex;
-            justify-content: flex-end;
-            gap: 10px;
-            margin-top: 20px;
-        }
-
-        .btn-submit {
-            color: var(--color-white);
-            background-color: var(--color-purple);
-            border: 2px solid var(--color-purple);
-        }
+        /* Галерея */
+        .thumbnail-row { display: flex; gap: 10px; overflow-x: auto; padding: 10px 0; }
+        .thumbnail-wrapper { position: relative; width: 100px; height: 100px; flex-shrink: 0; }
+        .thumbnail { width: 100%; height: 100%; object-fit: cover; border-radius: 10px; border: 2px solid #ddd; }
         
-        .btn-submit:hover {
-            background-color: var(--color-purple-light);
-            border-color: var(--color-purple-light);
+        /* Кнопка видалення (хрестик) */
+        .btn-delete-img {
+            position: absolute; top: -5px; right: -5px;
+            background: red; color: white; width: 24px; height: 24px;
+            border-radius: 50%; text-align: center; line-height: 22px;
+            cursor: pointer; font-weight: bold; border: 2px solid white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
         }
+        .btn-delete-img:hover { transform: scale(1.1); }
 
-        .btn-cancel {
-            color: var(--color-purple);
-            background-color: var(--color-background);
-            border: 2px solid var(--color-purple);
-        }
-
-        .btn-cancel:hover {
-            color: var(--color-white);
-            background-color: var(--color-purple);
-        }
-        
-        /* Зображення для форми */
-        .product-images {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-        
-        .product-images .thumbnail-row {
-            display: flex;
-            overflow-x: auto;
-            flex-wrap: nowrap;
-            padding: 7px 0;
-            gap: 10px;
-        }
-
-        .product-images .thumbnail {
-            min-width: 80px;
-            max-width: 80px;
-            height: 80px;
-            object-fit: cover;
-            cursor: pointer;
-            border: 2px solid transparent;
-        }
-
-        #selectedImage {
-            margin-bottom: 10px;
-        }
-
-        /* Адаптивність */
-        @media (max-width: 767px) {
-            .add-product-form {
-                padding: 10px;
-            }
-
-            .form-row {
-                flex-direction: column;
-                gap: 15px;
-            }
-        }
+        #selectedImage { width: 100%; max-height: 400px; object-fit: contain; border-radius: 10px; background: #f9f9f9; }
     </style>
 </head>
 <body>
-<header>
-    <!-- Вставляємо header.html -->
-    <nav id="nav" class="topnav">
-        <div class="nav-logo"><a href="./index.html">RUBY</a></div>
-        <a href="javascript:void(0);" class="icon" onclick="myFunction()">
-            <i class="fa fa-bars"></i>
-        </a>
-        <div class="nav-main">
-            <div class="nav-first">
-                <a href="./menu.html" class="active">Меню</a>
-                <a href="./index.html#about-us">Про нас</a>
-                <a href="./news.html">Новини</a>
-                <a href="./info.html">Інформація</a>
-                <a href="./contacts.html">Контакти</a>
-            </div>
-            <div class="nav-second">
-                <a href="./account.html"><i class="fa fa-user" aria-hidden="true"></i></a>
-                <a href="./shoppingcart.html"><i class="fa fa-shopping-cart" aria-hidden="true"></i></a>
-            </div>
-        </div>
-    </nav>
-</header>
-
-<main>
-    <div id="scrollToTopBtn"></div>
-    <script src="code.js"></script>
-    <div class="banner">
-        <img src="./image/waves_4.png" width="100%" alt="волны">
-    </div>
     <div class="main">
-        <h2 class="title">Додавання нового товару</h2>
+        <h2 class="title" style="text-align: center; margin-top: 20px;" id="formTitle">Додавання товару</h2>
 
-        <!-- Форма відправлятиме дані на наш новий PHP API endpoint -->
         <form id="productForm" class="add-product-form" onsubmit="handleProductSubmit(event)">
+            <input type="hidden" id="productId" name="product_id" value=""> 
             
-            <!-- Секція зображень -->
-            <div class="product-images">
-                <img id="selectedImage" src="https://placehold.co/600x400/D9D9D9/747474?text=Основне+зображення" alt="Selected Cake">
-                
-                <div class="thumbnail-row-wrapper">
-                    <div class="thumbnail-row" id="thumbnailRow">
-                        <!-- Тут будуть динамічно відображатися мініатюри вибраних файлів -->
-                    </div>
-                </div>
+            <!-- Основне фото -->
+            <div style="text-align: center;">
+                <img id="selectedImage" src="https://placehold.co/600x400/eee/999?text=No+Image" alt="Preview">
+            </div>
+
+            <!-- Галерея -->
+            <div>
+                <label>Галерея (Ви можете видаляти старі фото):</label>
+                <div class="thumbnail-row" id="thumbnailRow"></div>
             </div>
             
             <div class="form-row full-width">
                  <div class="form-group">
-                    <label for="productName">Назва товару (Name)*</label>
+                    <label>Назва товару*</label>
                     <input type="text" id="productName" name="name" required>
                 </div>
             </div>
 
             <div class="form-row full-width">
                 <div class="form-group">
-                    <label for="productDescription">Опис (Description)</label>
+                    <label>Опис</label>
                     <textarea id="productDescription" name="description"></textarea>
                 </div>
             </div>
 
             <div class="form-row">
                 <div class="form-group">
-                    <label for="productPrice">Ціна (Price)*, грн</label>
-                    <input type="number" id="productPrice" name="price" step="0.01" min="0" required>
+                    <label>Ціна, грн*</label>
+                    <input type="number" id="productPrice" name="price" step="0.01" required>
                 </div>
                 <div class="form-group">
-                    <label for="productWeight">Вага (Weight)*, кг</label>
-                    <input type="number" id="productWeight" name="weight" step="0.1" min="0.1" value="1.0" required>
+                    <label>Вага, кг</label>
+                    <input type="number" id="productWeight" name="weight" step="0.01" value="1.0">
                 </div>
             </div>
             
             <div class="form-row">
                 <div class="form-group">
-                    <label for="productCategory">Категорія (Category ID)*</label>
+                    <label>Категорія*</label>
                     <select id="productCategory" name="category_id" required>
-                        <option value="">Оберіть категорію...</option>
                         <option value="1">Торти</option>
                         <option value="2">Мусові тістечка</option>
                         <option value="3">Еклери</option>
@@ -224,136 +96,209 @@
                     </select>
                 </div>
                 <div class="form-group">
-                    <label for="productIsActive">Активний (Is Active)</label>
+                    <label>Активний</label>
                     <select id="productIsActive" name="is_active">
-                        <option value="1" selected>Так</option>
+                        <option value="1">Так</option>
                         <option value="0">Ні</option>
                     </select>
                 </div>
             </div>
             
-            <div class="form-row full-width">
-                <div class="form-group">
-                    <label for="productImageUpload">Завантажити головне зображення (Допускається декілька)</label>
-                    <!-- КОРЕКТНИЙ ТЕГ ДЛЯ МНОЖИННОГО ВИБОРУ -->
-                    <input type="file" id="productImageUpload" name="images[]" accept="image/*" multiple>
-                </div>
+            <!-- Завантаження нових фото -->
+            <div class="form-group">
+                <label style="color: #2e7d32;">Додати НОВІ фото (з'являться після збереження):</label>
+                <input type="file" id="productImageUpload" name="images[]" accept="image/*" multiple>
             </div>
 
-            <div class="form-actions">
-                <button type="button" onclick="window.history.back()" class="change-button btn-cancel">Скасувати</button>
-                <button type="submit" class="change-button btn-submit">ЗБЕРЕГТИ ТОВАР</button>
+            <div style="display: flex; justify-content: space-between; margin-top: 20px;">
+                <button type="button" onclick="history.back()" style="padding: 10px 20px; cursor: pointer;">Назад</button>
+                <button type="submit" class="btn-submit" id="submitBtn">ЗБЕРЕГТИ</button>
             </div>
         </form>
     </div>
-</main>
-<div id="footer"></div>
-<script>
-    const defaultImageSrc = "https://placehold.co/600x400/D9D9D9/747474?text=Основне+зображення";
-    const selectedImage = document.getElementById('selectedImage');
-    const thumbnailRow = document.getElementById('thumbnailRow');
-    
-    function selectImage(imageSrc) {
-        selectedImage.src = imageSrc;
-    }
-    
-    function updateThumbnails(files) {
-        // Очищаємо ряд мініатюр
-        thumbnailRow.innerHTML = '';
-        
-        if (files.length === 0) {
-            selectedImage.src = defaultImageSrc;
-            return;
-        }
 
-        // Виводимо повідомлення, скільки файлів було вибрано
-        console.log(`Вибрано файлів: ${files.length}`);
+<script>
+    const defaultImageSrc = "https://placehold.co/600x400/eee/999?text=No+Image";
+    const thumbnailRow = document.getElementById('thumbnailRow');
+    const selectedImage = document.getElementById('selectedImage');
+
+    // Перевірка на режим редагування при завантаженні
+    document.addEventListener('DOMContentLoaded', () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const editId = urlParams.get('id');
+        if (editId) {
+            enableEditMode(editId);
+        }
+    });
+
+    // Заповнення форми даними
+    async function enableEditMode(id) {
+        document.getElementById('formTitle').textContent = 'Редагування товару #' + id;
+        document.getElementById('productId').value = id;
+        document.getElementById('submitBtn').textContent = 'ОНОВИТИ ТОВАР';
+
+        // URL залежить від того, де ми знаходимось (frontend папка чи корінь)
+        let apiPath = window.location.pathname.includes('/frontend/') 
+            ? '../backend/product_api.php?action=get&id=' + id 
+            : '/backend/product_api.php?action=get&id=' + id;
+
+        try {
+            const response = await fetch(apiPath);
+            const data = await response.json();
+            
+            if (data.success && data.product) {
+                const p = data.product;
+                document.getElementById('productName').value = p.name;
+                document.getElementById('productDescription').value = p.description;
+                document.getElementById('productPrice').value = p.price;
+                document.getElementById('productWeight').value = p.weight;
+                document.getElementById('productCategory').value = p.category_id;
+                document.getElementById('productIsActive').value = p.is_active;
+
+                renderExistingImages(p.images_array);
+                if (p.main_image) selectedImage.src = p.main_image;
+            }
+        } catch (e) {
+            console.error(e);
+            alert("Помилка завантаження даних товару");
+        }
+    }
+
+    // Відображення існуючих фото з кнопками видалення
+    // --- ОНОВЛЕНА ФУНКЦІЯ: Відображення існуючих фото з кнопками видалення ---
+    function renderExistingImages(images) {
+        thumbnailRow.innerHTML = '';
+        if (!images || images.length === 0) return;
+
+        images.forEach(imgUrl => {
+            const wrapper = document.createElement('div');
+            wrapper.className = 'thumbnail-wrapper';
+
+            const img = document.createElement('img');
+            img.src = imgUrl;
+            img.className = 'thumbnail';
+            img.onclick = () => selectedImage.src = imgUrl;
+
+            const delBtn = document.createElement('div');
+            delBtn.className = 'btn-delete-img';
+            delBtn.innerHTML = '&times;';
+            delBtn.title = 'Видалити назавжди';
+            delBtn.onclick = (e) => {
+                e.stopPropagation();
+                deleteImageFromServer(imgUrl, wrapper);
+            };
+
+            wrapper.appendChild(img);
+            wrapper.appendChild(delBtn);
+            thumbnailRow.appendChild(wrapper);
+        });
+    }
+
+    async function deleteImageFromServer(imgUrl, element) {
+        if (!confirm('Видалити це фото?')) return;
+
+        let apiPath = window.location.pathname.includes('/frontend/') 
+            ? '../backend/product_api.php?action=delete_image' 
+            : '/backend/product_api.php?action=delete_image';
+
+        try {
+            const response = await fetch(apiPath, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ image_url: imgUrl })
+            });
+            const res = await response.json();
+
+            if (res.success) {
+                element.remove(); // Видаляємо з екрану
+                if (selectedImage.src.includes(imgUrl)) selectedImage.src = defaultImageSrc;
+            } else {
+                alert("Помилка: " + res.message);
+            }
+        } catch (e) {
+            alert("Помилка з'єднання");
+        }
+    }
+
+    // Попередній перегляд НОВИХ файлів (зелена рамка)
+    document.getElementById('productImageUpload').addEventListener('change', function(e) {
+        const files = e.target.files;
+        // Не очищаємо thumbnailRow, просто додаємо прев'ю в кінець
+        // Або можна очистити тільки "нові" прев'ю, якщо треба
         
-        // Відображаємо мініатюри
         for (let i = 0; i < files.length; i++) {
             const file = files[i];
-            
-            // Перевіряємо, чи це дійсно зображення
-            if (!file.type.startsWith('image/')) {
-                console.error(`Файл ${file.name} не є зображенням і буде проігноровано.`);
-                continue;
-            }
-
-            // Читаємо файл як URL
             const reader = new FileReader();
-            reader.onload = function(e) {
-                const imgUrl = e.target.result;
+            reader.onload = function(evt) {
+                const wrapper = document.createElement('div');
+                wrapper.className = 'thumbnail-wrapper';
                 
-                // Створюємо елемент мініатюри
-                const thumb = document.createElement('img');
-                thumb.className = 'thumbnail';
-                thumb.src = imgUrl;
-                thumb.alt = `Мініатюра ${i + 1}`;
+                const img = document.createElement('img');
+                img.src = evt.target.result;
+                img.className = 'thumbnail';
+                img.style.borderColor = '#2e7d32'; // Зелена рамка для нових
+                img.style.borderWidth = '3px';
                 
-                // При натисканні на мініатюру, робимо її головною
-                thumb.onclick = () => selectImage(imgUrl);
-
-                thumbnailRow.appendChild(thumb);
-
-                // Якщо це перше зображення, робимо його головним
-                if (i === 0) {
-                    selectedImage.src = imgUrl;
-                }
+                wrapper.appendChild(img);
+                thumbnailRow.appendChild(wrapper);
+                
+                if (selectedImage.src === defaultImageSrc) selectedImage.src = evt.target.result;
             };
             reader.readAsDataURL(file);
         }
-    }
-
-    document.getElementById('productImageUpload').addEventListener('change', function(event) {
-        const files = event.target.files;
-        // !!! Ключова зміна: ми використовуємо event.target.files, що містить усі вибрані файли.
-        updateThumbnails(files);
     });
 
-    // Функція для відправки даних на реальний бэкенд
+    // Відправка форми
     async function handleProductSubmit(event) {
         event.preventDefault();
-        
         const form = event.target;
         const formData = new FormData(form);
-        
-        // КОРЕКЦІЯ ШЛЯХУ: Використовуємо window.location.origin для абсолютної адреси
-        const backendUrl = window.location.origin + '/backend/product_api.php?action=create'; 
+        const id = document.getElementById('productId').value;
+        const action = id ? 'update' : 'create';
 
-        // Скидаємо попередній стан кнопки
-        const submitButton = form.querySelector('.btn-submit');
-        submitButton.disabled = true;
-        submitButton.textContent = 'ЗБЕРЕЖЕННЯ...';
+        let apiPath = window.location.pathname.includes('/frontend/') 
+            ? '../backend/product_api.php?action=' + action 
+            : '/backend/product_api.php?action=' + action;
+
+        const btn = document.getElementById('submitBtn');
+        btn.disabled = true;
+        btn.textContent = 'ЗБЕРЕЖЕННЯ...';
 
         try {
-            const response = await fetch(backendUrl, {
-                method: 'POST',
-                body: formData 
-            });
+            const response = await fetch(apiPath, { method: 'POST', body: formData });
             
-            // Якщо сервер повернув JSON
-            const result = await response.json();
-            
-            if (response.ok && result.success) {
-                 alert(`Товар "${formData.get('name')}" (ID: ${result.product_id}) успішно додано!`);
-                 form.reset(); 
-                 updateThumbnails([]); // Очистити мініатюри
-                 selectedImage.src = defaultImageSrc;
+            // Читаємо відповідь як текст спочатку, щоб зловити PHP помилки
+            const text = await response.text();
+            let data;
+            try {
+                data = JSON.parse(text);
+            } catch (e) {
+                console.error("Server Error:", text);
+                alert("Сервер повернув помилку (див. консоль)");
+                btn.disabled = false;
+                return;
+            }
+
+            if (data.success) {
+                alert(data.message);
+                if (action === 'create') {
+                    form.reset();
+                    thumbnailRow.innerHTML = '';
+                    selectedImage.src = defaultImageSrc;
+                } else {
+                    location.reload(); // Перезавантажити, щоб побачити оновлені дані
+                }
             } else {
-                // Обробка помилок сервера
-                const message = result.message || `Помилка: ${response.status} ${response.statusText}. Перевірте логі PHP на хостингу.`;
-                alert(`Помилка сервера: ${message}`);
-                console.error("Помилка сервера:", message);
+                alert("Помилка: " + data.message);
             }
         } catch (error) {
-            // Обробка помилок мережі
-            alert('Помилка відправки даних. Переконайтеся, що PHP-файл доступний за шляхом: ' + backendUrl);
-            console.error('Помилка відправки форми (Network/CORS):', error);
+            console.error(error);
+            alert("Помилка мережі");
         } finally {
-            submitButton.disabled = false;
-            submitButton.textContent = 'ЗБЕРЕГТИ ТОВАР';
+            btn.disabled = false;
+            btn.textContent = id ? 'ОНОВИТИ ТОВАР' : 'ЗБЕРЕГТИ';
         }
     }
-
 </script>
+</body>
 </html>

@@ -49,6 +49,7 @@ class OrderRepository
         }
     }
 
+    // Пошук замовлень КОНКРЕТНОГО користувача
     public function findByUserId(int $userId): array
     {
         $query = "SELECT o.*, a.city, a.street, a.house 
@@ -62,9 +63,7 @@ class OrderRepository
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    // --- АДМІНСЬКІ МЕТОДИ ---
-
-    // Отримати ВСІ замовлення (з іменами користувачів і адресами)
+    // Для адміна: всі замовлення
     public function findAllOrders(): array
     {
         $query = "
@@ -82,7 +81,6 @@ class OrderRepository
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    // Оновити статус замовлення
     public function updateStatus(int $orderId, string $status): bool
     {
         $query = "UPDATE orders SET status = :status WHERE id = :id";
@@ -92,7 +90,7 @@ class OrderRepository
         return $stmt->execute();
     }
     
-    // Отримати товари конкретного замовлення (для деталей в адмінці)
+    // Отримати товари для замовлення
     public function getOrderItems(int $orderId): array
     {
         $query = "

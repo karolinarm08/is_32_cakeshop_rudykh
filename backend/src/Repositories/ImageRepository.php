@@ -16,25 +16,22 @@ class ImageRepository
 
     /**
      * Отримує всі шляхи до зображень для конкретного продукту.
-     * @param int $productId ID продукту.
-     * @return array Масив шляхів (image_url).
      */
     public function findImagesByProductId(int $productId): array
     {
         try {
-            // Отримуємо шляхи зображень, сортуючи їх за display_order
             $stmt = $this->db->prepare("SELECT image_url FROM product_images WHERE product_id = ? ORDER BY display_order ASC");
             $stmt->execute([$productId]);
-            // Повертаємо лише масив URL (перший елемент буде головним)
             return $stmt->fetchAll(PDO::FETCH_COLUMN);
-
         } catch (PDOException $e) {
             error_log("SQL Error on Find Images: " . $e->getMessage());
             return [];
         }
     }
 
-    // ... (Метод saveProductImagePaths залишається без змін)
+    /**
+     * Зберігає нові зображення (додає до існуючих).
+     */
     public function saveProductImagePaths(int $productId, array $paths): bool
     {
         if (empty($paths)) {
@@ -49,7 +46,6 @@ class ImageRepository
         $order = 1; 
         foreach ($paths as $path) {
             $placeholders[] = "(?, ?, ?, ?)";
-            
             $values[] = $productId;
             $values[] = $path; 
             $values[] = 'Фото продукту ' . $productId;
@@ -61,9 +57,33 @@ class ImageRepository
         try {
             $stmt = $this->db->prepare($sql);
             return $stmt->execute($values);
-
         } catch (PDOException $e) {
             error_log("SQL Error on Save Images: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Видаляє конкретне зображення за його URL.
+     */
+    public function deleteByUrl(string $imageUrl): bool
+    {
+        try {
+            // 1. Видаляємо з БД
+            $stmt = $this->db->prepare("DELETE FROM product_images WHERE image_url = ?");
+            $stmt->execute([$imageUrl]);
+
+            // 2. Видаляємо фізичний файл з сервера
+            // Шлях відносно кореня проекту (де лежить папка uploads)
+            $filePath = dirname(__DIR__, 3) . '/' . $imageUrl;
+            
+            if (file_exists($filePath)) {
+                unlink($filePath); // Видалення файлу
+            }
+
+            return true;
+        } catch (PDOException $e) {
+            error_log("Delete Image Error: " . $e->getMessage());
             return false;
         }
     }
