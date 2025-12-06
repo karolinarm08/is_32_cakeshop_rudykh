@@ -589,371 +589,281 @@
         }
     </style>
 
-    <script>
-        // Конфигурация API
-        const API_BASE = window.location.pathname.includes('/frontend/') ? '../backend/api/' : '/backend/api/';
-        const API_CART_URL = API_BASE + 'cart.php';
-        const API_ORDER_URL = API_BASE + 'order.php';
-        const API_USER_URL = API_BASE + 'user.php';
+<script>
+    // Налаштування API
+    // Визначаємо правильний шлях в залежності від того, де ми знаходимось
+    const isFrontend = window.location.pathname.includes('/frontend/');
+    const API_BASE = isFrontend ? '../backend/api/' : 'backend/api/';
+    
+    // Використовуємо auth.php для отримання профілю, бо він повертає і адресу
+    const API_AUTH_URL = API_BASE + 'auth.php'; 
+    const API_CART_URL = API_BASE + 'cart.php';
+    const API_ORDER_URL = API_BASE + 'order.php';
 
-        document.addEventListener('DOMContentLoaded', () => {
-            loadUserData();
-            loadCartItems();
-            loadSavedAddresses();
-            setupFormValidation();
-        });
+    document.addEventListener('DOMContentLoaded', () => {
+        loadUserProfile(); // Завантажуємо профіль та адресу з сервера
+        loadCartItems();   // Завантажуємо товари
+        setupFormValidation();
+    });
 
-        // Загружаем данные пользователя
-        function loadUserData() {
-            const userDataStr = localStorage.getItem('user_data');
-            if (!userDataStr) {
-                showMessage('Будь ласка, увійдіть в акаунт для оформлення замовлення', 'error');
-                setTimeout(() => window.location.href = 'account.html', 2000);
-                return;
-            }
-
-            const userData = JSON.parse(userDataStr);
-            
-            // Заполняем форму данными пользователя
-            document.getElementById('fname').value = userData.first_name || '';
-            document.getElementById('lname').value = userData.last_name || '';
-            document.getElementById('phnumber').value = userData.phone || '';
-            document.getElementById('email').value = userData.email || '';
+    // 1. Завантаження даних користувача та адреси
+    async function loadUserProfile() {
+        const userDataStr = localStorage.getItem('user_data');
+        if (!userDataStr) {
+            showMessage('Будь ласка, увійдіть в акаунт', 'error');
+            setTimeout(() => window.location.href = 'index.html', 1500);
+            return;
         }
 
-        // Загружаем товары из корзины
-        function loadCartItems() {
-            const userDataStr = localStorage.getItem('user_data');
-            if (!userDataStr) return;
+        const localData = JSON.parse(userDataStr);
+        const email = localData.email;
 
-            const userEmail = JSON.parse(userDataStr).email;
-            
-            fetch(API_CART_URL + '?action=get', {
+        try {
+            // Робимо запит за свіжими даними (включаючи адресу)
+            const response = await fetch(API_AUTH_URL + '?action=getProfile', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email: userEmail })
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data.success) {
-                    if (data.items && data.items.length > 0) {
-                        renderCartItems(data.items);
-                        updateSummary(data.total || 0, data.items.length);
-                    } else {
-                        document.getElementById('cartItemsContainer').innerHTML = 
-                            '<p style="text-align: center; color: var(--color-grey-dark);">Кошик порожній</p>';
-                        updateSummary(0, 0);
-                    }
-                } else {
-                    showMessage('Помилка завантаження кошика: ' + data.message, 'error');
-                }
-            })
-            .catch(err => {
-                console.error('Error loading cart:', err);
-                showMessage('Помилка завантаження кошика', 'error');
+                body: JSON.stringify({ email: email })
             });
-        }
 
-        // Отображаем товары из корзины
-        function renderCartItems(items) {
-            const container = document.getElementById('cartItemsContainer');
-            container.innerHTML = '';
+            const data = await response.json();
 
-            items.forEach(item => {
-                // Используем .card-img для стиля изображения
-                const imgUrl = item.image_url || './image/placeholder.png'; 
-                const itemTotal = (item.price * item.quantity).toFixed(2);
+            if (data.success && data.user) {
+                const u = data.user;
                 
-                // ИСПОЛЬЗУЕМ КЛАССЫ ИЗ style.css: card-container, card, card-img и т.д.
-                // Добавляем order-card-small для применения компактных стилей.
-                const itemHtml = `
-                <div class="card-container order-card-small">
-                    <img class="card-img" src="${imgUrl}" 
-                         onerror="this.onerror=null;this.src='./image/placeholder.png';"
-                         alt="${item.name}">
-                    <div class="card">
-                        <div class="card-text">
-                            <p class="card-name">${item.name}</p>
-                            <!-- Используем card-descr, чтобы показать цену за единицу и количество -->
-                            <p class="card-descr">${item.price} грн × ${item.quantity} шт.</p>
-                        </div>
-                        <div class="card-details">
-                            <!-- Используем класс card-weight, как в меню -->
-                            <p class="card-weight">${item.weight || '1'} кг</p> 
-                            <!-- Отображаем общую сумму за этот товар -->
-                            <p class="card-price">${itemTotal} грн</p>
-                        </div>
+                // Заповнюємо Персональні дані
+                // Перевіряємо ключі: name/firstName, lastName, phone
+                document.getElementById('email').value = u.email || '';
+                document.getElementById('fname').value = u.name || u.firstName || '';
+                document.getElementById('lname').value = u.lastName || '';
+                document.getElementById('phnumber').value = u.phone || '';
+
+                // Якщо у користувача збережена адреса - заповнюємо її
+                if (u.address) {
+                    fillAddressFields(u.address);
+                    // Також відобразимо її у списку "Збережені адреси" для наочності
+                    renderSavedAddresses([u.address]); 
+                }
+            } else {
+                console.warn('Не вдалося отримати дані профілю');
+            }
+        } catch (error) {
+            console.error('Помилка завантаження профілю:', error);
+        }
+    }
+
+    // Допоміжна функція для заповнення полів адреси
+    function fillAddressFields(addr) {
+        if (!addr) return;
+        document.getElementById('city').value = addr.city || '';
+        document.getElementById('street').value = addr.street || '';
+        document.getElementById('house').value = addr.house || '';
+        document.getElementById('apartment').value = addr.apartment || '';
+        document.getElementById('floor').value = addr.floor || '';
+    }
+
+    // Відображення збереженої адреси (якщо треба вибрати ще раз)
+    function renderSavedAddresses(addresses) {
+        const container = document.getElementById('saved-addresses');
+        if (!addresses || addresses.length === 0) return;
+
+        container.innerHTML = '<h4>Ваша збережена адреса:</h4>';
+        
+        addresses.forEach(addr => {
+            const addressText = `${addr.city}, ${addr.street}, ${addr.house}`;
+            const div = document.createElement('div');
+            div.className = 'saved-address-item';
+            div.innerHTML = `
+                <div class="saved-address-text">${addressText}</div>
+                <span class="saved-address-use" style="color:var(--color-purple); font-size:12px; cursor:pointer; text-decoration:underline;">
+                    Заповнити поля цією адресою
+                </span>
+            `;
+            div.onclick = () => fillAddressFields(addr);
+            container.appendChild(div);
+        });
+    }
+
+    // 2. Завантаження кошика
+    function loadCartItems() {
+        const userDataStr = localStorage.getItem('user_data');
+        if (!userDataStr) return;
+        const userEmail = JSON.parse(userDataStr).email;
+        
+        fetch(API_CART_URL + '?action=get', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: userEmail })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                if (data.items && data.items.length > 0) {
+                    renderCartItems(data.items);
+                    updateSummary(data.total || 0, data.items.length);
+                } else {
+                    document.getElementById('cartItemsContainer').innerHTML = 
+                        '<p style="text-align: center;">Кошик порожній</p>';
+                    updateSummary(0, 0);
+                }
+            }
+        })
+        .catch(err => console.error('Error loading cart:', err));
+    }
+
+    function renderCartItems(items) {
+        const container = document.getElementById('cartItemsContainer');
+        container.innerHTML = '';
+
+        items.forEach(item => {
+            const imgUrl = item.image_url || './image/placeholder.png'; 
+            const itemTotal = (item.price * item.quantity).toFixed(2);
+            
+            const html = `
+            <div class="card-container order-card-small">
+                <img class="card-img" src="${imgUrl}" onerror="this.src='./image/placeholder.png'">
+                <div class="card">
+                    <div class="card-text">
+                        <p class="card-name">${item.name}</p>
+                        <p class="card-descr">${item.quantity} шт. х ${item.price} грн</p>
+                    </div>
+                    <div class="card-details">
+                        <p class="card-weight">${item.weight || 1} кг</p>
+                        <p class="card-price">${itemTotal} грн</p>
                     </div>
                 </div>
-                `;
-                container.innerHTML += itemHtml;
-            });
-        }
+            </div>`;
+            container.innerHTML += html;
+        });
+    }
 
-        // Обновляем итоговую сумму
-        function updateSummary(subtotal, itemCount) {
-            const delivery = itemCount > 0 ? 50 : 0; // Доставка 50 грн
-            const total = subtotal + delivery;
-            
-            document.getElementById('subtotal').textContent = subtotal.toFixed(2) + ' грн';
-            document.getElementById('delivery-price').textContent = delivery.toFixed(2) + ' грн';
-            document.getElementById('total-price').textContent = total.toFixed(2) + ' грн';
-        }
+    function updateSummary(subtotal, count) {
+        // Логіка доставки: якщо сума > 1000, доставка безкоштовна (приклад)
+        // Або фіксована 50 грн, як у старому коді
+        const deliveryCost = (count > 0) ? 50 : 0; 
+        
+        document.getElementById('subtotal').textContent = parseFloat(subtotal).toFixed(2) + ' грн';
+        document.getElementById('delivery-price').textContent = deliveryCost.toFixed(2) + ' грн';
+        document.getElementById('total-price').textContent = (parseFloat(subtotal) + deliveryCost).toFixed(2) + ' грн';
+    }
 
-        // Загружаем сохраненные адреса
-        function loadSavedAddresses() {
-            const userDataStr = localStorage.getItem('user_data');
-            if (!userDataStr) return;
+    // 3. Відправка замовлення
+    async function submitOrder() {
+        if (!validateForm()) return;
 
-            const userEmail = JSON.parse(userDataStr).email;
-            
-            fetch(API_USER_URL + '?action=getAddresses', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email: userEmail })
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data.success && data.addresses && data.addresses.length > 0) {
-                    renderSavedAddresses(data.addresses);
-                }
-            })
-            .catch(err => console.error('Error loading addresses:', err));
-        }
+        const userDataStr = localStorage.getItem('user_data');
+        const userEmail = JSON.parse(userDataStr).email;
 
-        // Отображаем сохраненные адреса
-        function renderSavedAddresses(addresses) {
-            const container = document.getElementById('saved-addresses');
-            container.innerHTML = '<h4>Збережені адреси:</h4>';
+        // Збираємо дані
+        const orderData = {
+            email: userEmail, // Основний ідентифікатор
+            userData: {
+                first_name: document.getElementById('fname').value,
+                last_name: document.getElementById('lname').value,
+                phone: document.getElementById('phnumber').value
+            },
+            deliveryAddress: {
+                city: document.getElementById('city').value,
+                street: document.getElementById('street').value,
+                house: document.getElementById('house').value,
+                apartment: document.getElementById('apartment').value,
+                floor: document.getElementById('floor').value
+            },
+            paymentMethod: document.querySelector('input[name="payment"]:checked').value,
+            comment: document.getElementById('comment').value
+        };
 
-            addresses.forEach(addr => {
-                const addressText = `${addr.city}, ${addr.street}, ${addr.house}${addr.apartment ? ', кв. ' + addr.apartment : ''}`;
-                const addressHtml = `
-                <div class="saved-address-item" data-address-id="${addr.id}">
-                    <div class="saved-address-text">${addressText}</div>
-                    <span class="saved-address-use" onclick="useAddress(${addr.id})">Використати цю адресу</span>
-                </div>
-                `;
-                container.innerHTML += addressHtml;
-            });
-        }
+        const btn = document.querySelector('.confirm-button');
+        btn.disabled = true;
+        btn.textContent = 'Обробка...';
 
-        // Использовать сохраненный адрес
-        function useAddress(addressId) {
-            const userDataStr = localStorage.getItem('user_data');
-            if (!userDataStr) return;
-
-            const userEmail = JSON.parse(userDataStr).email;
-            
-            fetch(API_USER_URL + '?action=getAddress', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email: userEmail, address_id: addressId })
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data.success && data.address) {
-                    const addr = data.address;
-                    document.getElementById('city').value = addr.city || '';
-                    document.getElementById('street').value = addr.street || '';
-                    document.getElementById('house').value = addr.house || '';
-                    document.getElementById('apartment').value = addr.apartment || '';
-                    document.getElementById('floor').value = addr.floor || '';
-                    
-                    // Выделяем выбранный адрес
-                    document.querySelectorAll('.saved-address-item').forEach(el => {
-                        el.classList.remove('selected');
-                        if (el.dataset.addressId == addressId) {
-                            el.classList.add('selected');
-                        }
-                    });
-                }
-            })
-            .catch(err => console.error('Error loading address:', err));
-        }
-
-        // Настройка валидации формы
-        function setupFormValidation() {
-            const form = document.querySelector('.order-forms');
-            const inputs = form.querySelectorAll('input[required], textarea[required]');
-            
-            inputs.forEach(input => {
-                input.addEventListener('blur', () => validateField(input));
-                input.addEventListener('input', () => clearFieldError(input));
-            });
-        }
-
-        // Валидация поля
-        function validateField(field) {
-            const value = field.value.trim();
-            let isValid = true;
-            let message = '';
-
-            if (field.hasAttribute('required') && !value) {
-                isValid = false;
-                message = 'Це поле обов\'язкове для заповнення';
-            } else if (field.type === 'email' && value && !isValidEmail(value)) {
-                isValid = false;
-                message = 'Введіть коректний email';
-            } else if (field.id === 'phnumber' && value && !isValidPhone(value)) {
-                isValid = false;
-                message = 'Введіть коректний номер телефону';
-            }
-
-            if (!isValid) {
-                showFieldError(field, message);
-            } else {
-                clearFieldError(field);
-            }
-
-            return isValid;
-        }
-
-        // Проверка email
-        function isValidEmail(email) {
-            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-        }
-
-        // Проверка телефона
-        function isValidPhone(phone) {
-            return /^[\+]?[0-9]{10,13}$/.test(phone.replace(/\s/g, ''));
-        }
-
-        // Показать ошибку поля
-        function showFieldError(field, message) {
-            clearFieldError(field);
-            
-            const errorDiv = document.createElement('div');
-            errorDiv.className = 'field-error';
-            errorDiv.textContent = message;
-            errorDiv.style.color = 'var(--color-red)';
-            errorDiv.style.fontSize = '12px';
-            errorDiv.style.marginTop = '5px';
-            
-            field.style.borderColor = 'var(--color-red)';
-            field.parentNode.appendChild(errorDiv);
-        }
-
-        // Очистить ошибку поля
-        function clearFieldError(field) {
-            field.style.borderColor = '';
-            
-            const errorDiv = field.parentNode.querySelector('.field-error');
-            if (errorDiv) {
-                errorDiv.remove();
-            }
-        }
-
-        // Проверка всей формы
-        function validateForm() {
-            const requiredFields = document.querySelectorAll('input[required], textarea[required]');
-            let isValid = true;
-
-            requiredFields.forEach(field => {
-                if (!validateField(field)) {
-                    isValid = false;
-                }
-            });
-
-            if (!document.getElementById('consent').checked) {
-                showMessage('Потрібно дати згоду на обробку персональних даних', 'error');
-                isValid = false;
-            }
-
-            return isValid;
-        }
-
-        // Отправка заказа
-        function submitOrder() {
-            if (!validateForm()) {
-                return;
-            }
-
-            const userDataStr = localStorage.getItem('user_data');
-            if (!userDataStr) {
-                showMessage('Будь ласка, увійдіть в акаунт', 'error');
-                return;
-            }
-
-            const userData = JSON.parse(userDataStr);
-            
-            // Собираем данные формы
-            const orderData = {
-                email: userData.email,
-                personalData: {
-                    first_name: document.getElementById('fname').value.trim(),
-                    last_name: document.getElementById('lname').value.trim(),
-                    phone: document.getElementById('phnumber').value.trim(),
-                    email: document.getElementById('email').value.trim()
-                },
-                deliveryAddress: {
-                    city: document.getElementById('city').value.trim(),
-                    street: document.getElementById('street').value.trim(),
-                    house: document.getElementById('house').value.trim(),
-                    apartment: document.getElementById('apartment').value.trim(),
-                    floor: document.getElementById('floor').value.trim()
-                },
-                paymentMethod: document.querySelector('input[name="payment"]:checked').value,
-                comment: document.getElementById('comment').value.trim(),
-                consentDataProcessing: document.getElementById('consent').checked,
-                // ИСПРАВЛЕНИЕ: Удален лишний 'document:'
-                noCall: document.getElementById('no-call').checked
-            };
-
-            // Показываем загрузку
-            showMessage('Обробка замовлення...', 'info');
-
-            // Отправляем запрос
-            fetch(API_ORDER_URL + '?action=create', {
+        try {
+            const response = await fetch(API_ORDER_URL + '?action=create', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(orderData)
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data.success) {
-                    showMessage(`✅ Замовлення #${data.order_id} успішно оформлено!`, 'success');
-                    
-                    // Блокируем форму
-                    document.querySelector('.confirm-button').disabled = true;
-                    
-                    // Перенаправляем через 3 секунды
-                    setTimeout(() => {
-                        window.location.href = `account.html?orderSuccess=${data.order_id}`;
-                    }, 3000);
-                } else {
-                    showMessage('❌ Помилка: ' + data.message, 'error');
-                }
-            })
-            .catch(err => {
-                console.error('Order error:', err);
-                showMessage('❌ Помилка мережі. Спробуйте ще раз.', 'error');
             });
-        }
-
-        // Показать сообщение
-        function showMessage(text, type = 'info') {
-            const messageEl = document.getElementById('orderMessage');
-            messageEl.textContent = text;
-            messageEl.className = `order-message ${type}`;
             
-            // Автоскрытие для информационных сообщений
-            if (type === 'info') {
-                setTimeout(() => {
-                    if (messageEl.textContent === text) {
-                        messageEl.textContent = '';
-                        messageEl.className = 'order-message';
-                    }
-                }, 5000);
+            // Перевірка на HTML відповідь (помилка сервера)
+            const text = await response.text();
+            let data;
+            try {
+                data = JSON.parse(text);
+            } catch (e) {
+                console.error("Server Response:", text);
+                throw new Error("Сервер повернув помилку. Перевірте консоль.");
             }
+
+            if (data.success) {
+                showMessage(`✅ Замовлення №${data.order_id} успішно створено!`, 'success');
+                setTimeout(() => {
+                    // Перенаправлення в кабінет
+                    window.location.href = 'account.html';
+                }, 2000);
+            } else {
+                showMessage(data.message || 'Помилка створення замовлення', 'error');
+                btn.disabled = false;
+                btn.textContent = 'Підтвердити замовлення';
+            }
+
+        } catch (error) {
+            console.error(error);
+            showMessage('Сталася помилка з\'єднання', 'error');
+            btn.disabled = false;
+            btn.textContent = 'Підтвердити замовлення';
+        }
+    }
+
+    // Валідація
+    function validateForm() {
+        const requiredIds = ['fname', 'lname', 'phnumber', 'email', 'city', 'street', 'house'];
+        let isValid = true;
+        
+        requiredIds.forEach(id => {
+            const el = document.getElementById(id);
+            if (!el.value.trim()) {
+                el.style.borderColor = 'red';
+                isValid = false;
+            } else {
+                el.style.borderColor = '#D9D9D9';
+            }
+        });
+
+        if (!document.getElementById('consent').checked) {
+            alert('Будь ласка, надайте згоду на обробку даних');
+            isValid = false;
         }
 
-        // Функция для мобильного меню
-        function myFunction() {
-            const nav = document.getElementById("nav");
-            nav.className = nav.className === "topnav" ? "topnav responsive" : "topnav";
+        if (!isValid) showMessage('Заповніть обов\'язкові поля', 'error');
+        return isValid;
+    }
+
+    function showMessage(msg, type) {
+        const box = document.getElementById('orderMessage');
+        box.textContent = msg;
+        box.className = 'order-message ' + type;
+        box.style.display = 'block';
+    }
+
+    // Валідація при введенні
+    function setupFormValidation() {
+        const inputs = document.querySelectorAll('.account-input');
+        inputs.forEach(input => {
+            input.addEventListener('input', function() {
+                if(this.value.trim() !== '') this.style.borderColor = '#D9D9D9';
+            });
+        });
+    }
+    
+    function myFunction() {
+        var x = document.getElementById("nav");
+        if (x.className === "topnav") {
+            x.className += " responsive";
+        } else {
+            x.className = "topnav";
         }
-    </script>
+    }
+</script>
 </body>
 
 </html>

@@ -51,38 +51,4 @@ try {
     http_response_code(500);
     echo json_encode(['success' => false, 'message' => 'Помилка сервера: ' . $e->getMessage()]);
 }
-
-// В order.php добавляем после существующего кода:
-
-elseif ($action === 'getUserOrders' && $_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Получение заказов пользователя
-    $email = $data['email'] ?? '';
-    if (empty($email)) {
-        echo json_encode(['success' => false, 'message' => 'Email обов\'язковий']);
-        exit();
-    }
-
-    $userRepository = new App\Repositories\UserRepository();
-    $orderRepository = new App\Repositories\OrderRepository();
-
-    $user = $userRepository->findByEmail($email);
-    if (!$user) {
-        echo json_encode(['success' => false, 'message' => 'Користувача не знайдено']);
-        exit();
-    }
-
-    // Получаем заказы пользователя
-    $orders = $orderRepository->findByUserId($user->id);
-    
-    // Получаем количество товаров для каждого заказа
-    foreach ($orders as &$order) {
-        $order['items_count'] = $orderRepository->getOrderItemsCount($order['id']);
-    }
-
-    echo json_encode([
-        'success' => true,
-        'orders' => $orders
-    ]);
-    exit();
-}
 ?>
