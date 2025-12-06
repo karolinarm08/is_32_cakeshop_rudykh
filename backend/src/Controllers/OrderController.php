@@ -20,83 +20,92 @@ class OrderController
         $this->cartService = new CartService();
     }
 
+    // Створення замовлення (для всіх)
     public function create(array $data)
     {
-        // 1. Перевірка авторизації
         $email = $data['email'] ?? '';
         if (empty($email)) {
-            echo json_encode(['success' => false, 'message' => 'Необхідна авторизація']);
-            return;
+            echo json_encode(['success' => false, 'message' => 'Необхідна авторизація']); return;
         }
 
-        // 2. Перевірка кошика
         $cartResult = $this->cartService->getUserCart($email);
         if (!$cartResult['success'] || empty($cartResult['items'])) {
-            echo json_encode(['success' => false, 'message' => 'Кошик порожній']);
-            return;
+            echo json_encode(['success' => false, 'message' => 'Кошик порожній']); return;
         }
 
-        // 3. Отримання користувача
         $userRepository = new UserRepository();
         $user = $userRepository->findByEmail($email);
         if (!$user) {
-            echo json_encode(['success' => false, 'message' => 'Користувача не знайдено']);
-            return;
+            echo json_encode(['success' => false, 'message' => 'Користувача не знайдено']); return;
         }
 
-        // 4. ОБРОБКА ТА ЗБЕРЕЖЕННЯ АДРЕСИ (Виправлено)
         $addressId = null;
-        
-        // Якщо прийшли дані адреси, зберігаємо їх
         if (isset($data['deliveryAddress'])) {
             $addrData = $data['deliveryAddress'];
             $addressRepo = new AddressRepository();
-            
-            // Створюємо об'єкт адреси
-            $address = new Address(
-                $user->id,
-                $addrData['city'] ?? '',
-                $addrData['street'] ?? '',
-                $addrData['house'] ?? '',
-                $addrData['apartment'] ?? null,
-                $addrData['floor'] ?? null
-            );
-            
-            // Зберігаємо в БД (оновить існуючу або створить нову)
+            $address = new Address($user->id, $addrData['city'] ?? '', $addrData['street'] ?? '', $addrData['house'] ?? '', $addrData['apartment'] ?? null, $addrData['floor'] ?? null);
             if ($addressRepo->save($address)) {
-                // Отримуємо ID (знаходимо адресу користувача, яку щойно зберегли)
                 $savedAddr = $addressRepo->findByUserId($user->id);
-                if ($savedAddr) {
-                    $addressId = $savedAddr->id;
-                }
+                if ($savedAddr) $addressId = $savedAddr->id;
             }
         }
 
-        // 5. Підготовка товарів
         $cartItems = [];
         foreach ($cartResult['items'] as $item) {
-            $cartItems[] = [
-                'product_id' => $item['product_id'],
-                'qty' => $item['quantity']
-            ];
+            $cartItems[] = ['product_id' => $item['product_id'], 'qty' => $item['quantity']];
         }
 
-        // 6. Створення замовлення (передаємо знайдений addressId)
-        $orderResult = $this->orderService->createNewOrder(
-            $user->id,
-            $cartItems,
-            $addressId
-        );
+        $orderResult = $this->orderService->createNewOrder($user->id, $cartItems, $addressId);
 
-        // 7. Очищення кошика при успіху
         if ($orderResult['success']) {
             $cartRepository = new CartRepository();
             $cart = $cartRepository->findCartByUserId($user->id);
-            if ($cart) {
-                $cartRepository->clearCart($cart['id']);
-            }
+            if ($cart) $cartRepository->clearCart($cart['id']);
         }
 
         echo json_encode($orderResult);
+    }
+
+    // --- АДМІНСЬКІ МЕТОДИ ---
+
+    // Отримати всі замовлення
+    public function getAll(array $data)
+    {
+        // Перевірка прав адміна
+        if (!$this->isAdmin($data['admin_email'] ?? '')) {
+            echo json_encode(['success' => false, 'message' => 'Доступ заборонено. Тільки для адміністраторів.']);
+            return;
+        }
+
+        echo json_encode($this->orderService->getAllOrders());
+    }
+
+    // Змінити статус замовлення
+    public function updateStatus(array $data)
+    {
+        // Перевірка прав адміна
+        if (!$this->isAdmin($data['admin_email'] ?? '')) {
+            echo json_encode(['success' => false, 'message' => 'Доступ заборонено.']);
+            return;
+        }
+
+        $orderId = $data['order_id'] ?? 0;
+        $status = $data['status'] ?? '';
+        
+        if ($orderId <= 0 || empty($status)) {
+            echo json_encode(['success' => false, 'message' => 'Некоректні дані']);
+            return;
+        }
+
+        echo json_encode($this->orderService->changeStatus((int)$orderId, $status));
+    }
+
+    // Допоміжна функція перевірки адміна
+    private function isAdmin(string $email): bool
+    {
+        if (empty($email)) return false;
+        $userRepo = new UserRepository();
+        $user = $userRepo->findByEmail($email);
+        return ($user && $user->role === 'admin');
     }
 }

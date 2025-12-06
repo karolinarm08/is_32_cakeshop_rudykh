@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Адмін Панель - Замовлення</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/x-icon" href="./image/favicon.ico">
+    <style>
+        .admin-container { max-width: 1200px; margin: 30px auto; padding: 20px; }
+        .page-title { color: var(--color-purple); margin-bottom: 20px; }
+        .orders-table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 14px; background: white; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        .orders-table th, .orders-table td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+        .orders-table th { background-color: var(--color-purple); color: white; }
+        .orders-table tr:nth-child(even) { background-color: #f9f9f9; }
+        
+        .status-select { padding: 8px; border-radius: 5px; border: 1px solid #ccc; font-family: inherit; width: 100%; cursor: pointer; }
+        
+        /* Кольори статусів */
+        .status-new { background-color: #e3f2fd; color: #0d47a1; }
+        .status-processing { background-color: #fff3e0; color: #e65100; }
+        .status-shipped { background-color: #e8f5e9; color: #1b5e20; }
+        .status-delivered { background-color: #c8e6c9; color: #1b5e20; font-weight: bold; }
+        .status-cancelled { background-color: #ffebee; color: #b71c1c; }
+
+        .items-list { list-style: none; padding: 0; font-size: 13px; color: #333; margin: 0; }
+        .items-list li { margin-bottom: 4px; border-bottom: 1px dashed #eee; padding-bottom: 2px; }
+        
+        #error-msg { color: white; background: #e74c3c; padding: 10px; border-radius: 5px; text-align: center; margin-top: 20px; display: none; }
+        #success-msg { color: white; background: #2ecc71; padding: 10px; border-radius: 5px; position: fixed; top: 20px; right: 20px; display: none; z-index: 1000; }
+        
+        .client-info { font-size: 13px; line-height: 1.4; }
+        .client-info b { color: var(--color-purple); }
+    </style>
+</head>
+<body>
+    <header>
+        <nav id="nav" class="topnav">
+            <div class="nav-logo"><a href="./index.html">RUBY ADMIN</a></div>
+            <div class="nav-main">
+                <a href="./menu.html">Повернутися на сайт</a>
+                <a href="./account.html">Мій кабінет</a>
+            </div>
+        </nav>
+    </header>
+
+    <main style="padding-top: 80px;">
+        <div class="admin-container">
+            <h1 class="page-title">Управління замовленнями</h1>
+            <p>Тут ви можете переглядати всі замовлення та змінювати їх статус. При зміні статусу клієнт отримає email.</p>
+            
+            <div id="error-msg"></div>
+            <div id="success-msg">Статус оновлено!</div>
+
+            <table class="orders-table">
+                <thead>
+                    <tr>
+                        <th width="5%">ID</th>
+                        <th width="10%">Дата</th>
+                        <th width="20%">Клієнт</th>
+                        <th width="20%">Адреса доставки</th>
+                        <th width="25%">Товари</th>
+                        <th width="10%">Сума</th>
+                        <th width="10%">Статус</th>
+                    </tr>
+                </thead>
+                <tbody id="ordersBody">
+                    <tr><td colspan="7" style="text-align:center; padding: 20px;">Завантаження замовлень...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <script>
+        // API URL
+        let API_ORDER = '/backend/api/order.php';
+        if (window.location.pathname.includes('/frontend/')) { API_ORDER = '../backend/api/order.php'; }
+
+        let currentUserEmail = '';
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // 1. Перевірка на адміна
+            const userDataStr = localStorage.getItem('user_data');
+            if (!userDataStr) {
+                window.location.href = 'index.html';
+                return;
+            }
+            const user = JSON.parse(userDataStr);
+            if (user.role !== 'admin') {
+                alert("Доступ заборонено! Ця сторінка лише для адміністраторів.");
+                window.location.href = 'index.html';
+                return;
+            }
+
+            currentUserEmail = user.email;
+            loadOrders();
+        });
+
+        async function loadOrders() {
+            try {
+                const response = await fetch(API_ORDER + '?action=getAll', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ admin_email: currentUserEmail })
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    renderOrders(data.orders);
+                } else {
+                    showError(data.message);
+                }
+            } catch (err) {
+                console.error(err);
+                showError("Помилка завантаження даних. Перевірте консоль.");
+            }
+        }
+
+        function renderOrders(orders) {
+            const tbody = document.getElementById('ordersBody');
+            tbody.innerHTML = '';
+
+            if (orders.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;">Замовлень поки немає.</td></tr>';
+                return;
+            }
+
+            orders.forEach(order => {
+                const tr = document.createElement('tr');
+                
+                // Товари
+                let itemsHtml = '<ul class="items-list">';
+                if (order.items && Array.isArray(order.items)) {
+                    order.items.forEach(item => {
+                        // ВИПРАВЛЕНО: item.unit_price замість item.price
+                        const price = item.unit_price || item.price || 0; 
+                        itemsHtml += `<li>• ${item.name} (x${item.quantity}) - ${price} грн</li>`;
+                    });
+                }
+                itemsHtml += '</ul>';
+
+                // Адреса
+                const address = order.city ? `${order.city}, ${order.street} ${order.house}, кв. ${order.apartment || '-'}` : 'Самовивіз';
+                
+                // Клієнт
+                const clientInfo = `
+                    <div class="client-info">
+                        <b>${order.first_name} ${order.last_name || ''}</b><br>
+                        ${order.phone}<br>
+                        ${order.email}
+                    </div>
+                `;
+
+                // Селект статусу
+                // Додаємо клас кольору відповідно до поточного статусу
+                const statusSelect = `
+                    <select class="status-select status-${order.status}" onchange="changeStatus(${order.id}, this)">
+                        <option value="new" ${order.status === 'new' ? 'selected' : ''}>Нове</option>
+                        <option value="processing" ${order.status === 'processing' ? 'selected' : ''}>В обробці</option>
+                        <option value="shipped" ${order.status === 'shipped' ? 'selected' : ''}>Відправлено</option>
+                        <option value="delivered" ${order.status === 'delivered' ? 'selected' : ''}>Доставлено</option>
+                        <option value="cancelled" ${order.status === 'cancelled' ? 'selected' : ''}>Скасовано</option>
+                    </select>
+                `;
+
+                tr.innerHTML = `
+                    <td><b>#${order.id}</b></td>
+                    <td>${order.created_at}</td>
+                    <td>${clientInfo}</td>
+                    <td>${address}</td>
+                    <td>${itemsHtml}</td>
+                    <td><b>${order.total_price} грн</b></td>
+                    <td>${statusSelect}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        async function changeStatus(orderId, selectElement) {
+            const newStatus = selectElement.value;
+            
+            // Візуальна зміна кольору одразу
+            selectElement.className = `status-select status-${newStatus}`;
+            
+            // Блокуємо селект на час запиту
+            selectElement.disabled = true;
+
+            try {
+                const response = await fetch(API_ORDER + '?action=updateStatus', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        admin_email: currentUserEmail,
+                        order_id: orderId, 
+                        status: newStatus 
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showSuccess(`Статус замовлення #${orderId} оновлено!`);
+                } else {
+                    showError('Помилка: ' + data.message);
+                    // Можна повернути старе значення, якщо треба
+                }
+            } catch (err) {
+                showError("Помилка з'єднання");
+            } finally {
+                selectElement.disabled = false;
+            }
+        }
+        
+        function showError(msg) {
+            const el = document.getElementById('error-msg');
+            el.textContent = msg;
+            el.style.display = 'block';
+            setTimeout(() => el.style.display = 'none', 5000);
+        }
+
+        function showSuccess(msg) {
+            const el = document.getElementById('success-msg');
+            el.textContent = msg;
+            el.style.display = 'block';
+            setTimeout(() => el.style.display = 'none', 3000);
+        }
+    </script>
+</body>
+</html>

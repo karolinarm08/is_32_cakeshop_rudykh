@@ -2,10 +2,8 @@
 
 namespace App\Services;
 
-use App\Models\Order;
 use App\Repositories\OrderRepository;
 use App\Repositories\ProductRepository;
-use App\Repositories\CartRepository;
 use App\Repositories\UserRepository;
 
 class OrderService
@@ -26,7 +24,6 @@ class OrderService
         $total = 0;
         $orderItems = [];
 
-        // Розрахунок суми та підготовка товарів
         foreach ($cartItems as $item) {
             $product = $this->productRepository->findById($item['product_id']);
             if ($product) {
@@ -43,15 +40,13 @@ class OrderService
             return ['success' => false, 'message' => 'Кошик порожній'];
         }
 
-        // Создаем заказ в БД
         $orderId = $this->orderRepository->createOrder($userId, $total, $addressId);
         
         if ($orderId) {
-            // Збереження товарів замовлення
             $this->orderRepository->addItems($orderId, $orderItems);
             
-            // Отправляем email подтверждения
-            $this->sendOrderConfirmationEmail($userId, $orderId);
+            // Відправка email про створення
+            $this->sendOrderEmail($userId, $orderId, $total, 'new');
 
             return [
                 'success' => true, 
@@ -63,14 +58,71 @@ class OrderService
 
         return ['success' => false, 'message' => 'Помилка створення замовлення'];
     }
-    
-    private function sendOrderConfirmationEmail($userId, $orderId) {
-        // Получаем email пользователя
+
+    // --- МЕТОДИ ДЛЯ АДМІНА ---
+
+    public function getAllOrders(): array
+    {
+        $orders = $this->orderRepository->findAllOrders();
+        // Додаємо список товарів до кожного замовлення
+        foreach ($orders as &$order) {
+            $order['items'] = $this->orderRepository->getOrderItems($order['id']);
+        }
+        return ['success' => true, 'orders' => $orders];
+    }
+
+    public function changeStatus(int $orderId, string $newStatus): array
+    {
+        $allowedStatuses = ['new', 'processing', 'shipped', 'delivered', 'cancelled'];
+        
+        if (!in_array($newStatus, $allowedStatuses)) {
+            return ['success' => false, 'message' => 'Невірний статус'];
+        }
+
+        if ($this->orderRepository->updateStatus($orderId, $newStatus)) {
+            // Знаходимо замовлення, щоб отримати ID користувача
+            $order = $this->orderRepository->findById($orderId);
+            if ($order) {
+                // Відправляємо лист про зміну статусу
+                $this->sendOrderEmail($order->user_id, $orderId, $order->total_price, $newStatus);
+            }
+            
+            return ['success' => true, 'message' => "Статус замовлення #$orderId змінено на '$newStatus'"];
+        }
+        
+        return ['success' => false, 'message' => 'Помилка оновлення статусу'];
+    }
+
+    // --- Відправка E-mail ---
+    private function sendOrderEmail($userId, $orderId, $total, $status) {
         $user = $this->userRepository->findById($userId);
         if ($user) {
-            // Здесь должна быть логика отправки email
-            // mail($user->email, "Замовлення #$orderId підтверджено", "Дякуємо за покупку!");
-            error_log("Email отправлен на: " . $user->email . " для заказа #" . $orderId);
+            $to = $user->email;
+            $subject = "Замовлення #$orderId - Оновлення статусу";
+            
+            $statusText = match($status) {
+                'new' => 'Нове (очікує обробки)',
+                'processing' => 'В обробці (готуємо ваше замовлення)',
+                'shipped' => 'Відправлено (прямує до вас)',
+                'delivered' => 'Доставлено (смачного!)',
+                'cancelled' => 'Скасовано',
+                default => $status
+            };
+
+            $message = "Вітаємо, {$user->firstName}!\n\n";
+            $message .= "Статус вашого замовлення #$orderId оновлено.\n";
+            $message .= "Новий статус: $statusText.\n";
+            if ($status === 'new') {
+                $message .= "Сума до сплати: $total грн.\n";
+            }
+            $message .= "\nДякуємо, що обрали RUBY Cake Shop!";
+
+            $headers = "From: no-reply@cakeshop.great-site.net\r\n";
+            $headers .= "Content-Type: text/plain; charset=UTF-8\r\n";
+
+            // Функція mail() може не працювати на локальному сервері без налаштування SMTP,
+            // але на реальному хостингу повинна працювати.
+            @mail($to, $subject, $message, $headers);
         }
     }
 }

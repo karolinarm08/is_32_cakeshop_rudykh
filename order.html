@@ -740,7 +740,7 @@
     function updateSummary(subtotal, count) {
         // Логіка доставки: якщо сума > 1000, доставка безкоштовна (приклад)
         // Або фіксована 50 грн, як у старому коді
-        const deliveryCost = (count > 0) ? 50 : 0; 
+        const deliveryCost = (count > 0) ? 0 : 0; 
         
         document.getElementById('subtotal').textContent = parseFloat(subtotal).toFixed(2) + ' грн';
         document.getElementById('delivery-price').textContent = deliveryCost.toFixed(2) + ' грн';
