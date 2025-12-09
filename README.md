@@ -8,9 +8,9 @@ Web-застосунок інтернет-кондитерської з повн
 Система розгорнута на хостингу:
 https://cakeshop.great-site.net/index.html
 
-Frontend - HTML/CSS/JS
-Backend - PHP
-Database - MySQL
+Frontend - HTML/CSS/JS  
+Backend - PHP  
+Database - MySQL  
 
 Ролі та розподіл завдань:
 Ролі розподілені відповідно до основних бізнес-процесів та архітектури SOLID:
