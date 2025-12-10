@@ -15,8 +15,8 @@ requireModel($root . '/backend/src/Models/User.php');
 requireModel($root . '/backend/src/Models/Cart.php');
 requireModel($root . '/backend/src/Models/CartItem.php');
 requireModel($root . '/backend/src/Models/Product.php');
-requireModel($root . '/backend/src/Models/Order.php');   // Нове
-requireModel($root . '/backend/src/Models/Address.php'); // Нове
+requireModel($root . '/backend/src/Models/Order.php');
+requireModel($root . '/backend/src/Models/Address.php');
 
 use App\Models\User;
 use App\Models\Cart;
@@ -37,7 +37,7 @@ echo "<style>
     .debug { font-size: 0.85em; color: #7f8c8d; margin-left: 20px; display: block; margin-top: 4px; }
 </style></head><body>";
 
-echo "<h1>🛡️ Розширене тестування системи Cake Shop</h1>";
+echo "<h1>Розширене тестування системи Cake Shop</h1>";
 
 echo "<div class='section'><h2>1. User & Security (Безпека)</h2>";
 
@@ -51,7 +51,7 @@ runTest("User: Статичний метод hashPassword створює хеш"
     return "Хеш згенеровано: " . substr($hash, 0, 15) . "...";
 });
 
-runTest("User: verifyPassword приймає ПРАВИЛЬНИЙ пароль", function() {
+runTest("User: verifyPassword приймає правильний пароль", function() {
     $pass = "MySecret";
     $hash = password_hash($pass, PASSWORD_DEFAULT);
     $user = new User("test@mail.com", $hash, "TestUser");
@@ -61,7 +61,7 @@ runTest("User: verifyPassword приймає ПРАВИЛЬНИЙ пароль",
     }
 });
 
-runTest("User: verifyPassword відхиляє НЕПРАВИЛЬНИЙ пароль", function() {
+runTest("User: verifyPassword відхиляє неправильний пароль", function() {
     $user = new User("test@mail.com", password_hash("RealPass", PASSWORD_DEFAULT), "TestUser");
     
     if ($user->verifyPassword("WrongPass")) {
@@ -71,7 +71,7 @@ runTest("User: verifyPassword відхиляє НЕПРАВИЛЬНИЙ паро
 
 runTest("User: Перевірка ролей (Admin vs User)", function() {
     $admin = new User("a@a.com", "hash", "Admin", "admin");
-    $user = new User("u@u.com", "hash", "User", "user"); // Default role
+    $user = new User("u@u.com", "hash", "User", "user");
     
     if (!$admin->isAdmin()) throw new Exception("Адмін не розпізнаний.");
     if ($user->isAdmin()) throw new Exception("Звичайний юзер отримав права адміна.");
@@ -145,10 +145,10 @@ function runTest($name, $callback) {
     echo "<div class='test-case'><strong>$name</strong> ... ";
     try {
         $result = $callback();
-        echo "<span class='pass'>ПРОЙДЕНО ✅</span>";
+        echo "<span class='pass'>Тест пройдено</span>";
         if (is_string($result)) echo "<span class='debug'>Info: $result</span>";
     } catch (Exception $e) {
-        echo "<span class='fail'>НЕ ПРОЙДЕНО ❌</span>";
+        echo "<span class='fail'>Тест не пройдено</span>";
         echo "<span class='debug' style='color:red'>" . $e->getMessage() . "</span>";
     }
     echo "</div>";
