@@ -41,7 +41,7 @@ echo "<h1>Розширене тестування системи Cake Shop</h1>"
 
 echo "<div class='section'><h2>1. User & Security (Безпека)</h2>";
 
-runTest("User: Статичний метод hashPassword створює хеш", function() {
+runTest("User: статичний метод hashPassword створює хеш", function() {
     $rawPassword = "SecretPassword123";
     $hash = User::hashPassword($rawPassword);
     
@@ -69,7 +69,7 @@ runTest("User: verifyPassword відхиляє неправильний паро
     }
 });
 
-runTest("User: Перевірка ролей (Admin vs User)", function() {
+runTest("User: перевірка ролей (Admin vs User)", function() {
     $admin = new User("a@a.com", "hash", "Admin", "admin");
     $user = new User("u@u.com", "hash", "User", "user");
     
@@ -80,14 +80,14 @@ echo "</div>";
 
 echo "<div class='section'><h2>2. Модель Order (Замовлення)</h2>";
 
-runTest("Order: Перевірка дефолтного статусу 'new'", function() {
+runTest("Order: перевірка дефолтного статусу 'new'", function() {
     $order = new Order(1, 550.00);
     
     assertEquals('new', $order->status);
     assertEqualsFloat(550.00, $order->total);
 });
 
-runTest("Order: Створення дати замовлення", function() {
+runTest("Order: створення дати замовлення", function() {
     $order = new Order(1, 100.00);
     
     if (!($order->createdAt instanceof DateTime)) {
@@ -102,13 +102,13 @@ echo "</div>";
 
 echo "<div class='section'><h2>3. Cart & Calculations (Фінанси)</h2>";
 
-runTest("Cart: Порожній кошик = 0 грн", function() {
+runTest("Cart: порожній кошик = 0 грн", function() {
     $cart = new Cart(99);
     $total = $cart->getTotalPrice();
     assertEqualsFloat(0.0, $total);
 });
 
-runTest("Cart: Складний розрахунок (кілька товарів з копійками)", function() {
+runTest("Cart: складний розрахунок (кілька товарів з копійками)", function() {
     $cart = new Cart(99);
     
     $item1 = new CartItem($cart->id, 1, 3, 33.33);
@@ -126,7 +126,7 @@ echo "</div>";
 
 echo "<div class='section'><h2>4. Модель Address</h2>";
 
-runTest("Address: Створення об'єкта та nullable поля", function() {
+runTest("Address: створення об'єкта та nullable поля", function() {
     $addr = new Address(5, "Kyiv", "Khreshchatyk", "1");
     
     if ($addr->city !== "Kyiv") throw new Exception("Місто не збереглося");
